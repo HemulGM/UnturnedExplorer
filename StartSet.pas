@@ -16,8 +16,10 @@ type
     ButtonOK: TButton;
     Button2: TButton;
     FileOpenDialogApp: TFileOpenDialog;
+    LabelResult: TLabel;
     procedure Button2Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
@@ -28,9 +30,9 @@ var
   FormStartSet: TFormStartSet;
 
 implementation
+ uses Main, UnturnedIDB;
 
 {$R *.dfm}
- uses Main;
 
 procedure TFormStartSet.Button1Click(Sender: TObject);
 begin
@@ -46,12 +48,19 @@ begin
  if LookUnturnedPath(path) then
   begin
    EditHandlePath.Text:=path;
-   ShowMessage('Всё ок. Путь к игре найден и вставлен в поле');
+   LabelResult.Caption:='Всё ок. Путь к игре найден и вставлен в поле';
+   //ShowMessage('Всё ок. Путь к игре найден и вставлен в поле');
   end
  else
   begin
-   ShowMessage('Путь к игре не найден. Пожалуйста, укажите путь вручную');
+   LabelResult.Caption:='Путь к игре не найден. Пожалуйста, укажите путь вручную';
+   //ShowMessage('Путь к игре не найден. Пожалуйста, укажите путь вручную');
   end;
+end;
+
+procedure TFormStartSet.FormShow(Sender: TObject);
+begin
+ LabelResult.Caption:='';
 end;
 
 end.
