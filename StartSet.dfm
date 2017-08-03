@@ -2,24 +2,22 @@ object FormStartSet: TFormStartSet
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
   Caption = #1055#1077#1088#1074#1086#1085#1072#1095#1072#1083#1100#1085#1072#1103' '#1085#1072#1089#1090#1088#1086#1081#1082#1072
-  ClientHeight = 129
-  ClientWidth = 496
+  ClientHeight = 144
+  ClientWidth = 506
   Color = clBtnFace
-  Constraints.MaxHeight = 167
-  Constraints.MaxWidth = 512
-  Constraints.MinHeight = 167
-  Constraints.MinWidth = 512
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  Position = poDesktopCenter
+  Position = poMainFormCenter
+  OnShow = FormShow
   DesignSize = (
-    496
-    129)
+    506
+    144)
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel
@@ -43,16 +41,25 @@ object FormStartSet: TFormStartSet
     ParentFont = False
   end
   object Bevel2: TBevel
-    Left = 1
-    Top = 86
-    Width = 497
+    Left = -1
+    Top = 102
+    Width = 513
     Height = 6
+    Anchors = [akLeft, akBottom]
     Shape = bsTopLine
+    ExplicitTop = 110
+  end
+  object LabelResult: TLabel
+    Left = 8
+    Top = 76
+    Width = 490
+    Height = 13
+    AutoSize = False
   end
   object EditHandlePath: TEdit
     Left = 8
     Top = 49
-    Width = 401
+    Width = 411
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     AutoSelect = False
@@ -61,7 +68,7 @@ object FormStartSet: TFormStartSet
     TabOrder = 0
   end
   object Button1: TButton
-    Left = 414
+    Left = 423
     Top = 47
     Width = 75
     Height = 25
@@ -70,19 +77,21 @@ object FormStartSet: TFormStartSet
     OnClick = Button1Click
   end
   object ButtonOK: TButton
-    Left = 414
-    Top = 94
+    Left = 423
+    Top = 111
     Width = 75
     Height = 25
+    Anchors = [akLeft, akBottom]
     Caption = #1043#1086#1090#1086#1074#1086
     ModalResult = 1
     TabOrder = 2
   end
   object Button2: TButton
     Left = 8
-    Top = 94
+    Top = 110
     Width = 129
     Height = 25
+    Anchors = [akLeft, akBottom]
     Caption = #1053#1072#1081#1090#1080' '#1072#1074#1090#1086#1084#1072#1090#1080#1095#1077#1089#1082#1080
     TabOrder = 3
     OnClick = Button2Click
