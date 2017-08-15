@@ -23,7 +23,7 @@ type
   private
     { Private declarations }
   public
-    { Public declarations }
+    procedure AutoSearch;
   end;
 
 var
@@ -34,21 +34,16 @@ implementation
 
 {$R *.dfm}
 
-procedure TFormStartSet.Button1Click(Sender: TObject);
-begin
- if FileOpenDialogApp.Execute then
-  begin
-   EditHandlePath.Text:=ExtractFilePath(FileOpenDialogApp.FileName);
-  end;
-end;
-
-procedure TFormStartSet.Button2Click(Sender: TObject);
+procedure TFormStartSet.AutoSearch;
 var path:string;
 begin
+ LabelResult.Caption:='Поиск...';
+ Application.ProcessMessages;
+ Sleep(500);
  if LookUnturnedPath(path) then
   begin
    EditHandlePath.Text:=path;
-   LabelResult.Caption:='Всё ок. Путь к игре найден и вставлен в поле';
+   LabelResult.Caption:='Всё ок. Путь к игре найден и вставлен в поле. Нажмите "Готово"';
    //ShowMessage('Всё ок. Путь к игре найден и вставлен в поле');
   end
  else
@@ -58,9 +53,24 @@ begin
   end;
 end;
 
+procedure TFormStartSet.Button1Click(Sender: TObject);
+begin
+ if FileOpenDialogApp.Execute then
+  begin
+   EditHandlePath.Text:=ExtractFilePath(FileOpenDialogApp.FileName);
+  end;
+end;
+
+procedure TFormStartSet.Button2Click(Sender: TObject);
+begin
+ AutoSearch;
+end;
+
 procedure TFormStartSet.FormShow(Sender: TObject);
 begin
+ Application.ProcessMessages;
  LabelResult.Caption:='';
+ if EditHandlePath.Text = '' then AutoSearch;
 end;
 
 end.

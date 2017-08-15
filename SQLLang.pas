@@ -2,8 +2,7 @@ unit SQLLang;
 
 interface
  uses
-  System.Classes, System.SysUtils, SQLite3, SQLiteTable3, System.Generics.Collections,
-  Main.CommonFunc;
+  System.Classes, System.SysUtils, SQLite3, SQLiteTable3, System.Generics.Collections;
 
  type
   TFieldType = (ftInteger, ftString, ftFloat, ftDateTime, ftBlob, ftBoolean);
@@ -168,6 +167,12 @@ interface
   function InsertValue(Name:string; FieldType:TFieldType; Value:Variant):TInsertValue;
 
 implementation
+
+function FloatToSQLStr(Value:Extended):string;
+begin
+ Result:=FloatToStr(Value);
+ Result:=StringReplace(Result, ',', '.', [rfReplaceAll]);
+end;
 
 function FieldTypeToStr(Value:TFieldType):string;
 begin

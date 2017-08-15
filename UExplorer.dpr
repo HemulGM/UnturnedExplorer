@@ -11,7 +11,6 @@ uses
   SQLite3 in 'SQLite3.pas',
   SQLiteTable3 in 'SQLiteTable3.pas',
   SQLLang in 'SQLLang.pas',
-  Main.CommonFunc in '..\ToOffice\Main.CommonFunc.pas',
   UnturnedIDB in 'UnturnedIDB.pas';
 
 {$R *.res}

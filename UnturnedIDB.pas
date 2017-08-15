@@ -5,7 +5,7 @@ interface
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Dialogs, Vcl.Imaging.pngimage,
   System.Generics.Collections, System.JSON, System.Win.Registry,
-  SQLiteTable3, SQLite3, SQLLang, Winapi.WinInet, System.IniFiles;
+  SQLiteTable3, SQLite3, SQLLang, System.IniFiles, Winapi.WinInet;
 
  type
   //Уведомление о прогрессе загрузки
@@ -98,17 +98,17 @@ interface
   //Класс управления базой данных
   TUnturnedItemBase = class
    private
-    FLangInfo:TLangInfo;
-    FLangIni:TIniFile;
-    FUseLang:Boolean;
     FDBFileName:string;                                                         //Имя файла БД
     FFromPath:string;                                                           //Каталог с Unturned.exe
+    FLangInfo:TLangInfo;                                                        //Инфо. о файле перевода
+    FLangIni:TIniFile;                                                          //Языковой ini-файл
     FOnProgress:TOnProgress;                                                    //Событие прогресса обновления
     FRegProp:TRegProperies;                                                     //Ресстр свойств предметов
     FRegPropV:TRegProperies;                                                    //Реестр свойств транспорта
+    FShowDefLang:Boolean;                                                       //Показывать в скобках оригинальное название предмета, свойтва
     FSQLBase:TSQLiteDatabase;                                                   //База SQLite
+    FUseLang:Boolean;                                                           //Использовать файл перевода
     FVersion:string;                                                            //Версия БД (от игры)
-    FShowDefLang:Boolean;
     function FGetItemCount:Integer;                                             //Кол-во предметов
     function FOutdated:Boolean;                                                 //Флаг устаревения БД (от игры в каталоге)
     function FVehicleCount:Integer;                                             //Кол-во транспорта
@@ -136,7 +136,7 @@ interface
     function GetVehicleIcon(const ID:Integer; var BMP:TBitmap):Boolean;         //Получить иконку (32) транспорта
     function GetVehicleImage(const ID:Integer; var BMP:TBitmap):Boolean;        //Получить изображение (128) транспорта
     function SetVehicleImage(const ID:Integer; BMP:TBitmap):Boolean;            //Установить изображение и иконку транспорта
-    function UnloadDataStrings(AFile:string):Boolean;
+    function UnloadDataStrings(AFile:string):Boolean;                           //Выгрузить переводимые строки в файл
     procedure DropTables;                                                       //Очистить таблицы (кроме изобр. транспорта)
     procedure DropVehiclesImages;                                               //Очистить таблицу изображений транспорта
     procedure LoadLang(LangFileName:string);                                    //Загрузить перевод
@@ -145,15 +145,15 @@ interface
     procedure RegPropVehicle(PropName, PropDesc:string; Logical:Boolean; IsID:Boolean = False); //Регистрация свойства транспорта
     procedure ReloadFrom(AUnturnedPath:string = '');                            //Обновление базы данных (полное с загрузкой данных  с сайта)
     property ItemCount:Integer read FGetItemCount;                              //Кол-во предметов
+    property LangInfo:TLangInfo read FLangInfo;                                 //Инфо о файле перевода
     property OnProgress:TOnProgress read FOnProgress write FOnProgress;         //Событие прогресса
     property Outdated:Boolean read FOutdated;                                   //Флаг устаревания
     property PathFrom:string read FFromPath write FFromPath;                    //Каталог с игрой
+    property ShowDefLang:Boolean read FShowDefLang write FShowDefLang;          //Показывать оригинальное название предмета, свойства
+    property UsingLanguage:Boolean read FUseLang;                               //Использовать файл перевода
     property VehicleCount:Integer read FVehicleCount;                           //Кол-во транспорта
     property Version:string read GetVersion;                                    //Версия БД
     property VersionPath:string read GetVersionPath;                            //Версия игры в каталоге
-    property LangInfo:TLangInfo read FLangInfo;
-    property UsingLanguage:Boolean read FUseLang;
-    property ShowDefLang:Boolean read FShowDefLang write FShowDefLang;
   end;
 
  const
@@ -187,6 +187,8 @@ interface
   pathItems = '\Bundles\Items\';
   //Путь к транспорту
   pathVehicles = '\Bundles\Vehicles\';
+  //
+  pathMaps = '\Maps\';
   //Типа файлов предметов и транспорта
   pathItemsData = '.dat';
 
@@ -367,11 +369,7 @@ end;
 
 procedure TUnturnedItemBase.ReloadFrom(AUnturnedPath: string);
 begin
- if not FileExists(AUnturnedPath+'\'+pathUnturnedExe) then
-  begin
-   ShowMessage('Вы не указали каталог с игрой');
-   Exit;
-  end;
+ if not FileExists(AUnturnedPath+'\'+pathUnturnedExe) then Exit;
  FFromPath:=AUnturnedPath;
  DropTables;
  ReloadInfo(FFromPath);
@@ -407,9 +405,9 @@ type
    Desc:string;
   end;
 var GID:integer;
-    IconsPath, ItemPath:string;
+    IconsPath, ItemPath, tmp:string;
     ListItems:TStringList;
-    SR:TSearchRec;
+    SR, SRDir:TSearchRec;
 
 function LookIcon(Item:string):Integer;
 var it, P:Integer;
@@ -511,106 +509,118 @@ begin
  Data.Free;
 end;
 
-procedure FillItemGroup(Dir:string; GroupID:Integer);
-var DR:TSearchRec;
-    DI:TDataItem;
+procedure FillItem(FileDat, DRName:string; GroupID:Integer);
+var str:string;
+    PNGRect:TRect;
     IconFile:Integer;
     PNG:TPngImage;
     B32:Tbitmap;
     B128:Tbitmap;
     Stream:TMemoryStream;
-    str, FName:string;
-    PNGRect:TRect;
+    DI:TDataItem;
 begin
- if (FindFirst(Dir+'\*.*', faDirectory, DR) = 0) then
+ str:=DRName;
+ RepVar(str, '_', ' ');
+ DI:=InsertItemData(FileDat, str, GroupID);
+ IconFile:=LookIcon(DRName+'_'+IntToStr(DI.ID));
+ if IconFile > 0 then
+  begin
+   try
+    PNG:=TPngImage.Create;
+    PNG.LoadFromFile(IconsPath+ListItems.Strings[IconFile]);
+    //32x32
+    PNGRect.Left:=0;
+    PNGRect.Top:=0;
+    if PNG.Width > PNG.Height then
+     begin
+      PNGRect.Width:=32;
+      PNGRect.Height:=Round(PNG.Height * (32/PNG.Width));
+     end
+    else
+     if PNG.Width < PNG.Height then
+      begin
+       PNGRect.Height:=32;
+       PNGRect.Width:=Round(PNG.Width * (32/PNG.Height));
+      end
+     else
+      begin
+       PNGRect.Width:=32;
+       PNGRect.Height:=32;
+      end;
+    OffsetRect(PNGRect, Round((32 / 2) - (PNGRect.Width / 2)), Round((32 / 2) - (PNGRect.Height / 2)));
+    B32:=TBitmap.Create;
+    B32.SetSize(32, 32);
+    B32.Canvas.StretchDraw(PNGRect, PNG);
+    //128x128
+    PNGRect.Left:=0;
+    PNGRect.Top:=0;
+    if PNG.Width > PNG.Height then
+     begin
+      PNGRect.Width:=128;
+      PNGRect.Height:=Round(PNG.Height * (128/PNG.Width));
+     end
+    else
+     if PNG.Width < PNG.Height then
+      begin
+       PNGRect.Height:=128;
+       PNGRect.Width:=Round(PNG.Width * (128/PNG.Height));
+      end
+     else
+      begin
+       PNGRect.Width:=128;
+       PNGRect.Height:=128;
+      end;
+    OffsetRect(PNGRect, Round((128 / 2) - (PNGRect.Width / 2)), Round((128 / 2) - (PNGRect.Height / 2)));
+    //PNGRect.Top:=Round((128 / 2) - (PNGRect.Height / 2));
+    //PNGRect.Left:=Round((128 / 2) - (PNGRect.Width / 2));
+    B128:=TBitmap.Create;
+    B128.SetSize(128, 128);
+    B128.Canvas.StretchDraw(PNGRect, PNG);
+    PNG.Free;
+
+    Stream:=TMemoryStream.Create;
+    B128.SaveToStream(Stream);
+    Stream.Position:=0;
+    SQL.UpdateBlob(FSQLBase, tnItems, 'Image', 'IID = '+IntToStr(DI.IID), Stream);
+    Stream.Clear;
+    B128.Free;
+
+    Stream:=TMemoryStream.Create;
+    B32.SaveToStream(Stream);
+    Stream.Position:=0;
+    SQL.UpdateBlob(FSQLBase, tnItems, 'Icon', 'IID = '+IntToStr(DI.IID), Stream);
+    Stream.Clear;
+    B32.Free;
+   except
+
+   end;
+  end;
+end;
+
+procedure FillItemGroup(Dir, SRName:string; GroupID:Integer);
+var DR:TSearchRec;
+    FName:string;
+
+begin
+ if FindFirst(Dir+'\'+SRName+'\*.*', faDirectory, DR) = 0 then
   repeat
-   FName:=Dir+'\'+DR.Name+'\'+DR.Name+pathItemsData;
+   if (DR.Name = '.') or (DR.Name = '..') then Continue;
+   FName:=Dir+'\'+SRName+'\'+DR.Name+'\'+DR.Name+pathItemsData;
    if not FileExists(FName) then
     begin
-     FName:=Dir+'\'+DR.Name+'\Asset'+pathItemsData;
-     if not FileExists(FName) then Continue;
+     FName:=Dir+'\'+SRName+'\'+DR.Name+'\Asset'+pathItemsData;
+     if not FileExists(FName) then
+      begin
+       FillItemGroup(Dir, SRName+'\'+DR.Name, GroupID);
+       Continue;
+      end;
     end;
-   str:=DR.Name;
-   RepVar(str, '_', ' ');
-   DI:=InsertItemData(FName, str, GroupID);
-   IconFile:=LookIcon(DR.Name+'_'+IntToStr(DI.ID));
-   if IconFile > 0 then
-    begin
-     try
-      PNG:=TPngImage.Create;
-      PNG.LoadFromFile(IconsPath+ListItems.Strings[IconFile]);
-      //32x32
-      PNGRect.Left:=0;
-      PNGRect.Top:=0;
-      if PNG.Width > PNG.Height then
-       begin
-        PNGRect.Width:=32;
-        PNGRect.Height:=Round(PNG.Height * (32/PNG.Width));
-       end
-      else
-       if PNG.Width < PNG.Height then
-        begin
-         PNGRect.Height:=32;
-         PNGRect.Width:=Round(PNG.Width * (32/PNG.Height));
-        end
-       else
-        begin
-         PNGRect.Width:=32;
-         PNGRect.Height:=32;
-        end;
-      OffsetRect(PNGRect, Round((32 / 2) - (PNGRect.Width / 2)), Round((32 / 2) - (PNGRect.Height / 2)));
-      B32:=TBitmap.Create;
-      B32.SetSize(32, 32);
-      B32.Canvas.StretchDraw(PNGRect, PNG);
-      //128x128
-      PNGRect.Left:=0;
-      PNGRect.Top:=0;
-      if PNG.Width > PNG.Height then
-       begin
-        PNGRect.Width:=128;
-        PNGRect.Height:=Round(PNG.Height * (128/PNG.Width));
-       end
-      else
-       if PNG.Width < PNG.Height then
-        begin
-         PNGRect.Height:=128;
-         PNGRect.Width:=Round(PNG.Width * (128/PNG.Height));
-        end
-       else
-        begin
-         PNGRect.Width:=128;
-         PNGRect.Height:=128;
-        end;
-      OffsetRect(PNGRect, Round((128 / 2) - (PNGRect.Width / 2)), Round((128 / 2) - (PNGRect.Height / 2)));
-      //PNGRect.Top:=Round((128 / 2) - (PNGRect.Height / 2));
-      //PNGRect.Left:=Round((128 / 2) - (PNGRect.Width / 2));
-      B128:=TBitmap.Create;
-      B128.SetSize(128, 128);
-      B128.Canvas.StretchDraw(PNGRect, PNG);
-      PNG.Free;
-
-      Stream:=TMemoryStream.Create;
-      B128.SaveToStream(Stream);
-      Stream.Position:=0;
-      SQL.UpdateBlob(FSQLBase, tnItems, 'Image', 'IID = '+IntToStr(DI.IID), Stream);
-      Stream.Clear;
-      B128.Free;
-
-      Stream:=TMemoryStream.Create;
-      B32.SaveToStream(Stream);
-      Stream.Position:=0;
-      SQL.UpdateBlob(FSQLBase, tnItems, 'Icon', 'IID = '+IntToStr(DI.IID), Stream);
-      Stream.Clear;
-      B32.Free;
-     except
-
-     end;
-    end;
+   FillItem(FName, DR.Name, GroupID);
   until (FindNext(DR) <> 0);
 end;
 
 begin
- Progress(Round(pbMax * (1/4)), 'Загрузка списка вещей: Поиск образов вещей...');
+ Progress(Round(pbMax * (1/5)), 'Загрузка списка вещей: Поиск образов вещей...');
 
  IconsPath:=AUnturnedPath+pathItemIcons;
  ListItems:=TStringList.Create;
@@ -622,12 +632,12 @@ begin
 
  ItemPath:=AUnturnedPath+pathItems;
 
- Progress(Round(pbMax * (2/4)), 'Загрузка списка вещей: Чтение параметров вещей...');
+ Progress(Round(pbMax * (2/5)), 'Загрузка списка вещей: Чтение параметров вещей...');
  if (FindFirst(ItemPath+'*.*', faDirectory, SR) = 0) then
   repeat
    if (SR.Name = '.') or (SR.Name = '..') then Continue;
    if not DirectoryExists(ItemPath+SR.Name) then Continue;
-   Progress(Round(pbMax * (3/4)), 'Загрузка списка вещей: '+SR.Name);
+   Progress(Round(pbMax * (3/5)), 'Загрузка списка вещей: '+SR.Name);
    with SQL.InsertInto do
     begin
      TableName:=tnItemGroups;
@@ -636,9 +646,51 @@ begin
      EndCreate;
     end;
    GID:=FSQLBase.GetLastInsertRowID;
-   FillItemGroup(ItemPath+SR.Name, GID);
+   FillItemGroup(ItemPath, SR.Name, GID);
   until (FindNext(SR) <> 0);
  FindClose(SR);
+
+ if (FindFirst(AUnturnedPath+pathMaps+'*.*', faDirectory, SRDir) = 0) then
+  repeat
+   if (SRDir.Name = '.') or (SRDir.Name = '..') then Continue;
+   if not DirectoryExists(AUnturnedPath+pathMaps+SRDir.Name) then Continue;
+   Progress(Round(pbMax * (4/5)), 'Загрузка списка вещей: '+SRDir.Name);
+   ItemPath:=AUnturnedPath+pathMaps+SRDir.Name+pathItems;
+   if (FindFirst(ItemPath+'*.*', faDirectory, SR) = 0) then
+    repeat
+     if (SR.Name = '.') or (SR.Name = '..') then Continue;
+     if not DirectoryExists(ItemPath+SR.Name) then Continue;
+
+     tmp:=ItemPath+'\'+SR.Name+'\'+SR.Name+pathItemsData;
+     if FileExists(tmp) then
+      begin
+       with SQL.InsertInto do
+        begin
+         TableName:=tnItemGroups;
+         AddValue('Desc', SRDir.Name);
+         FSQLBase.ExecSQL(GetSQL);
+         EndCreate;
+        end;
+       GID:=FSQLBase.GetLastInsertRowID;
+       FillItem(tmp, SR.Name, GID);
+       Continue;
+      end;
+
+     Progress(Round(pbMax * (4/5)), 'Загрузка списка вещей: '+SR.Name);
+     with SQL.InsertInto do
+      begin
+       TableName:=tnItemGroups;
+       AddValue('Desc', SR.Name+' '+SRDir.Name);
+       FSQLBase.ExecSQL(GetSQL);
+       EndCreate;
+      end;
+     GID:=FSQLBase.GetLastInsertRowID;
+     FillItemGroup(ItemPath, SR.Name, GID);
+    until (FindNext(SR) <> 0);
+   FindClose(SR);
+
+  until (FindNext(SRDir) <> 0);
+ FindClose(SRDir);
 
  Progress(Round(pbMax), 'Готово');
 end;
@@ -658,9 +710,9 @@ type
 
 var ItemPath:string;
     DI:TDataItem;
-    SR:TSearchRec;
+    SR, SRDir:TSearchRec;
 
-function InsertItemData(ItemFile, IDesc:string):TDataItem;
+function InsertItemData(ItemFile, IDesc, Map:string):TDataItem;
 var j:Word;
     Data:TStringList;
     ResPos, p:Integer;
@@ -754,6 +806,7 @@ begin
     end;
   end;
  if Result.Engine = '' then Result.Engine:='Vehicle';
+ if Map <> '' then Result.Engine:=Result.Engine+' '+Map;
  with SQl.Select do
   begin
    TableName:=tnVehiclesGroups;
@@ -832,19 +885,46 @@ begin
  Data.Free;
 end;
 
+procedure ProcFolder(Path, Map:string);
+var Search:TSearchRec;
+begin
+ if (FindFirst(Path+'\*.*', faDirectory, Search) = 0) then
+  repeat
+   if (Search.Name = '.') or (Search.Name = '..') then Continue;
+   Progress(Round(pbMax * (3/4)), 'Загрузка данных транспорта: '+Search.Name+'...');
+   if not FileExists(Path+'\'+Search.Name+'\'+Search.Name+pathItemsData) then
+    begin
+     ProcFolder(Path+'\'+Search.Name, Map);
+     Continue;
+    end;
+   DI:=InsertItemData(Path+'\'+Search.Name+'\'+Search.Name+pathItemsData, Search.Name, Map);
+  until (FindNext(Search) <> 0);
+ FindClose(Search);
+end;
+
 begin
  Progress(1, 'Загрузка списка транспорта...');
 
  ItemPath:=AUnturnedPath+pathVehicles;
 
- Progress(Round(pbMax * (1/2)), 'Загрузка данных транспорта...');
+ Progress(Round(pbMax * (1/4)), 'Загрузка данных транспорта...');
  if (FindFirst(ItemPath+'*.*', faDirectory, SR) = 0) then
   repeat
    if not FileExists(ItemPath+SR.Name+'\'+SR.Name+pathItemsData) then Continue;
-   Progress(Round(pbMax * (1/2)), SR.Name);
-   DI:=InsertItemData(ItemPath+SR.Name+'\'+SR.Name+pathItemsData, SR.Name);
+   Progress(Round(pbMax * (2/4)), 'Загрузка данных транспорта: '+SR.Name+'...');
+   DI:=InsertItemData(ItemPath+SR.Name+'\'+SR.Name+pathItemsData, SR.Name, '');
   until (FindNext(SR) <> 0);
  FindClose(SR);
+
+ if (FindFirst(AUnturnedPath+pathMaps+'*.*', faDirectory, SRDir) = 0) then
+  repeat
+   if (SRDir.Name = '.') or (SRDir.Name = '..') then Continue;
+   if not DirectoryExists(AUnturnedPath+pathMaps+SRDir.Name) then Continue;
+   Progress(Round(pbMax * (3/4)), 'Загрузка данных транспорта: '+SRDir.Name);
+   ItemPath:=AUnturnedPath+pathMaps+SRDir.Name+pathVehicles;
+   ProcFolder(ItemPath, SRDir.Name);
+  until (FindNext(SRDir) <> 0);
+ FindClose(SRDir);
 
  Progress(Round(pbMax), 'Готово');
 end;
@@ -1071,6 +1151,7 @@ end;
 function TUnturnedItemBase.GetVehicleData(const VID: Integer; var Item: TItemProperties): Boolean;
 var Table:TSQLiteTable;
     Prop:TItemPorp;
+    LangStr:string;
 begin
  with SQL.Select do
   begin
@@ -1090,6 +1171,11 @@ begin
    Prop.Desc:=Table.FieldAsString(1);
    Prop.IsID:=Boolean(Table.FieldAsInteger(2));
    Prop.Value:=Table.FieldAsString(3);
+   if FUseLang then
+    begin
+     LangStr:=FLangIni.ReadString(tnVehiclesData, Prop.Value, '');
+     if LangStr <> '' then Prop.Value:=LangStr;
+    end;
    Item.Add(Prop);
    Table.Next;
   end;
@@ -1550,7 +1636,7 @@ begin
   end;
  Items.Clear;
  Group.GID:=-1;
- Group.Desc:='Все группы';
+ Group.Desc:='Все классы предметов';
  Items.Add(Group);
  while not Table.EOF do
   begin
@@ -1583,7 +1669,7 @@ begin
   end;
  Items.Clear;
  Group.GID:=-1;
- Group.Desc:='Все группы';
+ Group.Desc:='Все виды транспорта';
  Items.Add(Group);
  while not Table.EOF do
   begin
