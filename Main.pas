@@ -8,11 +8,12 @@ uses
   Vcl.ComCtrls, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Imaging.pngimage, Vcl.Menus, Vcl.Imaging.jpeg, Vcl.Styles,
   Data.DB, Vcl.ToolWin, System.ImageList, System.Generics.Collections,
   Vcl.Buttons, sSpeedButton, sPanel, UnturnedIDB, Vcl.Grids, TableDraw, Vcl.Imaging.GIFImg,
-  acPNG, sComboBoxes, sColorSelect, Vcl.Clipbrd;
+  acPNG, sComboBoxes, sColorSelect, Vcl.Clipbrd, Vcl.ExtDlgs;
 
 type
   TLoadState = (lsNone, lsLoading, lsLoaded);
-  TJumpsControl = procedure(Sender:TObject; JumpData:Integer) of Object;
+
+  TJumpsControl = procedure(Sender:TObject; JumpData:Integer) of object;
   TJumps = TList<Integer>;
   TUENavigator = class
    private
@@ -37,6 +38,7 @@ type
     property OnJump:TNotifyEvent read FOnJump write FOnJump;
     constructor Create;
   end;
+
   TLanguage = record
    Version:string;
    Autor:string;
@@ -102,7 +104,6 @@ type
     Panel15: TPanel;
     Label18: TLabel;
     EditVehGroup: TEdit;
-    OpenDialog: TOpenDialog;
     PanelCtrlInfo: TPanel;
     Shape11: TShape;
     Label21: TLabel;
@@ -190,6 +191,9 @@ type
     Edit1: TEdit;
     Label28: TLabel;
     SpeedButtonGame: TsSpeedButton;
+    OpenPictureDialog: TOpenPictureDialog;
+    SpeedButtonUBaseUpdate: TsSpeedButton;
+    CheckBoxShowHints: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ButtonReloadClick(Sender: TObject);
@@ -231,74 +235,75 @@ type
     procedure SpeedButtonCopyURLClick(Sender: TObject);
     procedure ImageShareGClick(Sender: TObject);
     procedure SpeedButtonGameClick(Sender: TObject);
+    procedure SpeedButtonUBaseUpdateClick(Sender: TObject);
   private
-    //settings
-    FIncreasingSortItem:Boolean;
+    //Settings
     FColumnSortItem:Integer;
-    FIncreasingSortVehicle:Boolean;
     FColumnSortVehicle:Integer;
-    FLastSRItem:string;
-    FLastSRVehicle:string;
+    FIncreasingSortItem:Boolean;
+    FIncreasingSortVehicle:Boolean;
     FLang:string;
     FLanguages:TLanguages;
+    FLastSRItem:string;
+    FLastSRVehicle:string;
     FMainColor:TColor;
     FShowDefLang:Boolean;
     /////////////////////
     FAppPath: string;
-    FLoadState:TLoadState;
     FLoadInfoStr:string;
+    FLoadState:TLoadState;
+    procedure FUpdateTableVehicles;
     procedure OnItemJump(Sender:TObject);
     procedure OnItemJumpCtrl(Sender:TObject; JumpData:Integer);
-    procedure FUpdateTableVehicles;
     procedure PanelMenuState(Minimazed: Boolean);
+    procedure SelectItem(Index:Integer; Hand:Boolean);
+    procedure SetAppPath(const Value: string);
+    procedure SetLoadInfoStr(Value:string);
     procedure SetLoadState(Value:TLoadState);
     procedure SetMenuColor(Value: TColor);
     procedure SetMenuIconColor(Color: TColor);
-    procedure SetLoadInfoStr(Value:string);
-    procedure SetAppPath(const Value: string);
-    procedure SelectItem(Index:Integer; Hand:Boolean);
     procedure SetShowDefLang(const Value: Boolean);
   public
-    NavItems:TUENavigator;
-    UBase:TUnturnedItemBase;
-    OpenMaster:Boolean;
-    FVehicles:TDisplayDataVehicles;
-    FVehicleProp:TItemProperties;
-    FItems:TDisplayDataItems;
     FItemGroups:TGroups;
-    FVehicleGroups:TGroups;
     FItemProp:TItemProperties;
+    FItems:TDisplayDataItems;
+    FVehicleGroups:TGroups;
+    FVehicleProp:TItemProperties;
+    FVehicles:TDisplayDataVehicles;
+    NavItems:TUENavigator;
+    OpenMaster:Boolean;
+    UBase:TUnturnedItemBase;
+    function ApplySettings:Boolean;
     function FindItem(ID:Integer):Integer; overload;
     function FindItem(Str:string; Skip:Integer):Integer; overload;
     function FindVehicle(ID: Integer): Integer; overload;
     function FindVehicle(Str:string; Skip:Integer): Integer; overload;
-    procedure OnLoadProgress(AMax, APos:Integer; Info:string);
-    procedure Quit;
-    procedure FUpdateTableItems;
+    function LoadSettings:Boolean;
+    function PathMaster:Boolean;
+    function SaveSettings:Boolean;
+    procedure CreateTables;
+    procedure DefaultSettings;
     procedure FUpdateGroups;
     procedure FUpdateTableItemProp;
+    procedure FUpdateTableItems;
     procedure FUpdateTableVehicleProp;
-    procedure CreateTables;
     procedure GetAllItems;
+    procedure OnLoadProgress(AMax, APos:Integer; Info:string);
+    procedure Page(Tab:TTabSheet);
+    procedure PutSettings;
+    procedure Quit;
+    procedure Share(Tag:Integer);
     procedure UpdateItemsData;
     procedure UpdateVehiclesData;
-    function PathMaster:Boolean;
-    function LoadSettings:Boolean;
-    function SaveSettings:Boolean;
-    function ApplySettings:Boolean;
-    procedure DefaultSettings;
-    procedure PutSettings;
-    procedure Page(Tab:TTabSheet);
-    procedure Share(Tag:Integer);
-    property ShowDefLang:Boolean read FShowDefLang write SetShowDefLang;
-    property LoadState:TLoadState read FLoadState write SetLoadState;
-    property LoadInfoStr:string read FLoadInfoStr write SetLoadInfoStr;
     property AppPath:string read FAppPath write SetAppPath;
+    property LoadInfoStr:string read FLoadInfoStr write SetLoadInfoStr;
+    property LoadState:TLoadState read FLoadState write SetLoadState;
+    property ShowDefLang:Boolean read FShowDefLang write SetShowDefLang;
   end;
 
 const
   AppVerMajor = 1;
-  AppVerMinor = 1;
+  AppVerMinor = 3;
   VerPrefix = 'Beta';
   AppTitle = 'Проводник Unturned';
   AppDesc = 'Всегда свежий список ID предметов и транспорта в удобной для вас форме';
@@ -351,6 +356,8 @@ begin
  ProgressBarGeneral.Max:=AMax;
  ProgressBarGeneral.Position:=APos;
  LabelCurrentLoad.Caption:=Info;
+ LabelVehicleCount.Caption:=IntToStr(UBase.VehicleCount);
+ LabelItemCount.Caption:=IntToStr(UBase.ItemCount);
  Repaint;
 end;
 
@@ -368,6 +375,7 @@ begin
  FLang:=Ini.ReadString('General', 'Language', '');
  FMainColor:=Ini.ReadInteger('General', 'SkinColor', FMainColor);
  FShowDefLang:=Ini.ReadBool('General', 'ShowDefLang', True);
+ ShowHint:=Ini.ReadBool('General', 'ShowHints', True);
  Ini.Free;
 end;
 
@@ -383,7 +391,8 @@ begin
  Ini.WriteInteger('General', 'FColumnSortVehicle', FColumnSortVehicle);
  Ini.WriteString('General', 'Language', FLang);
  Ini.WriteInteger('General', 'SkinColor', FMainColor);
- Ini.ReadBool('General', 'ShowDefLang', FShowDefLang);
+ Ini.WriteBool('General', 'ShowDefLang', FShowDefLang);
+ Ini.WriteBool('General', 'ShowHints', ShowHint);
  Ini.Free;
  Result:=True;
 end;
@@ -399,6 +408,7 @@ begin
  end;
  SetMenuColor(ColorDarker(FMainColor));
  SetMenuIconColor(ColorLighter(FMainColor));
+ ShowHint:=CheckBoxShowHints.Checked;
  UBase.ShowDefLang:=ShowDefLang;
 end;
 
@@ -458,6 +468,7 @@ begin
 
  ColorSelectMain.ColorValue:=FMainColor;
  CheckBoxLangShowDef.Checked:=ShowDefLang;
+ CheckBoxShowHints.Checked:=ShowHint;
 end;
 
 procedure TFormMain.Quit;
@@ -702,7 +713,7 @@ end;
 
 procedure TFormMain.SetAppPath(const Value: string);
 begin
- FAppPath:= Value;
+ FAppPath:=Value;
  EditUnturnedPath.Text:=FAppPath;
 end;
 
@@ -881,6 +892,7 @@ procedure TFormMain.DefaultSettings;
 begin
  FMainColor:=$00647C64; //$00666666 $00647C64
  FLang:='';
+ ShowHint:=True;
  ShowDefLang:=True;
 end;
 
@@ -1045,7 +1057,7 @@ begin
  ShellExecute(Application.Handle, 'open', PWideChar(link), '', '', SW_NORMAL);
 end;
 begin
- //https://www.facebook.com/sharer/sharer.php?u=%s
+  //https://www.facebook.com/sharer/sharer.php?u=%s
   //https://twitter.com/intent/tweet?url=%s&text=%s
   //https://vk.com/share.php?url=%s&description=%s
   //https://plus.google.com/share?url=%s
@@ -1118,6 +1130,11 @@ begin
  EditSearchVehicle.Clear;
 end;
 
+procedure TFormMain.SpeedButtonUBaseUpdateClick(Sender: TObject);
+begin
+ GetAllItems;
+end;
+
 procedure TFormMain.SpeedButtonLoadVehImagesClick(Sender: TObject);
 begin
  LoadState:=lsLoading;
@@ -1152,7 +1169,7 @@ begin
  UBase:=TUnturnedItemBase.Create(DataBaseFN);
  UBase.OnProgress:=OnLoadProgress;
  EditURL.Text:=URLApp;
- EditAppVer.Text:=IntToStr(AppVerMajor)+'.'+IntToStr(AppVerMinor);
+ EditAppVer.Text:=IntToStr(AppVerMajor)+'.'+IntToStr(AppVerMinor)+' '+VerPrefix;
  if not LoadSettings then OpenMaster:=True
  else
   begin
@@ -1171,7 +1188,6 @@ begin
    ComboBoxItemGroups.Items.Add(FItemGroups[i].Desc);
   end;
  if ComboBoxItemGroups.Items.Count > 0 then ComboBoxItemGroups.ItemIndex:=0;
-
 
  ComboBoxVehicleGroup.Clear;
  for i:= 0 to FVehicleGroups.Count-1 do
@@ -1210,7 +1226,25 @@ begin
  EditUnturnedVer.Text:=UBase.Version;
  LabelVehicleCount.Caption:=IntToStr(UBase.VehicleCount);
  LabelItemCount.Caption:=IntToStr(UBase.ItemCount);
- if UBase.Outdated then EditOutdated.Text:='Да'
+ if not DirectoryExists(UBase.PathFrom) then
+  begin
+   if MessageBox(Handle, 'Необходимо указать каталог с игрой. Сделать это сейчас?', '', MB_ICONINFORMATION or MB_YESNO) = ID_YES then
+    begin
+     PathMaster;
+     if not DirectoryExists(UBase.PathFrom) then Exit;
+    end
+   else Exit;
+  end;
+
+ if UBase.Outdated then
+  begin
+   EditOutdated.Text:='Да';
+   if MessageBox(Handle, 'Выполинть обновление базы прямо сейчас?'+#13+#10+'Это займёт не более минуты. И это необходимо.', '', MB_ICONINFORMATION or MB_YESNO) = ID_YES then
+    begin
+     ButtonReloadClick(nil);
+     Exit;
+    end;
+  end
  else EditOutdated.Text:='Нет';
  EditUVersion.Text:=UBase.VersionPath;
  UBase.GetGroupsItem(FItemGroups);
@@ -1245,8 +1279,8 @@ begin
  VID:=TableExVehicles.ItemIndex;
  if not IndexInList(VID, TList(FVehicles)) then Exit;
  VID:=FVehicles[VID].ID;
- if not OpenDialog.Execute(Handle) then Exit;
- FName:=OpenDialog.FileName;
+ if not OpenPictureDialog.Execute(Handle) then Exit;
+ FName:=OpenPictureDialog.FileName;
  Image:=TImage.Create(nil);
  try
   Image.Picture.LoadFromFile(FName);

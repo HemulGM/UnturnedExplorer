@@ -1,7 +1,7 @@
 object FormMain: TFormMain
   Left = 0
   Top = 0
-  Caption = #1055#1088#1086#1074#1086#1076#1085#1080#1082' Unturned'
+  Caption = #1047#1072#1075#1088#1091#1079#1082#1072'...'
   ClientHeight = 711
   ClientWidth = 1066
   Color = clBtnFace
@@ -42,14 +42,12 @@ object FormMain: TFormMain
       Top = -6
       Width = 1034
       Height = 722
-      ActivePage = TabSheetManage
+      ActivePage = TabSheetVehicle
       Anchors = [akLeft, akTop, akRight, akBottom]
       TabOrder = 0
       object TabSheetManage: TTabSheet
         Caption = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077
         TabVisible = False
-        ExplicitWidth = 1009
-        ExplicitHeight = 694
         object PanelCtrCllient: TPanel
           Left = 0
           Top = 0
@@ -60,10 +58,6 @@ object FormMain: TFormMain
           Color = 15856113
           ParentBackground = False
           TabOrder = 0
-          ExplicitLeft = 512
-          ExplicitTop = 432
-          ExplicitWidth = 185
-          ExplicitHeight = 41
           object PanelCtrlInfo: TPanel
             AlignWithMargins = True
             Left = 6
@@ -184,7 +178,7 @@ object FormMain: TFormMain
               Height = 13
               Alignment = taCenter
               AutoSize = False
-              Caption = #1042#1089#1077#1075#1086' '#1090#1088#1072#1085#1089#1086#1088#1090#1072
+              Caption = #1042#1089#1077#1075#1086' '#1090#1088#1072#1085#1089#1087#1086#1088#1090#1072
               Font.Charset = DEFAULT_CHARSET
               Font.Color = 5723991
               Font.Height = -11
@@ -307,7 +301,7 @@ object FormMain: TFormMain
               ParentFont = False
               ReadOnly = True
               TabOrder = 3
-              Text = #1047#1072#1075#1088#1091#1079#1082#1072'...'
+              Text = #1053#1077' '#1080#1079#1074#1077#1089#1090#1085#1086
             end
           end
           object PanelCtrlUpdate: TPanel
@@ -653,6 +647,51 @@ object FormMain: TFormMain
               OnClick = SpeedButtonLoadVehImagesClick
               WordWrap = False
             end
+            object SpeedButtonUBaseUpdate: TsSpeedButton
+              Left = 580
+              Top = 39
+              Width = 24
+              Height = 21
+              Hint = #1054#1073#1085#1086#1074#1080#1090#1100
+              Flat = True
+              Glyph.Data = {
+                36040000424D3604000000000000360000002800000010000000100000000100
+                2000000000000004000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                000000000000000000000000000055555557575757BE575757F2585858F95858
+                58CE565656764D4D4D0A00000000000000000000000000000000000000000000
+                0000000000000000000000000000575757B2595959FD575757D5575757D05858
+                58F7595959FF595959D550505020000000000000000000000000000000000000
+                0000000000005555550600000000555555065252521F00000000000000005555
+                550F57575790585858FE595959D54D4D4D0A0000000000000000000000000000
+                00005656568B585858CB50505010000000000000000000000000000000000000
+                00000000000057575790595959FF565656760000000000000000000000005656
+                5682585858FE595959FF585858CA505050100000000000000000000000000000
+                0000000000005555550F585858F7585858CE0000000000000000000000005858
+                58BF585858FF585858FF585858FF575757CD3333330500000000000000000000
+                00005555553C5555554B585858E0585858FA5555554B00000000000000004040
+                4008585858B7585858FE555555244646460B0000000000000000000000000000
+                000057575761585858FC595959FF595959FF585858FE00000000000000000000
+                00005858587D595959FF57575761000000000000000000000000000000000000
+                0000000000005757575E585858FC585858FE5757578D00000000000000000000
+                00005252521F585858F7585858E55555551E0000000000000000000000000000
+                000000000000000000005757575E565656850000000000000000000000000000
+                0000000000005757576F585858FF585858E557575761555555185555550F5656
+                56475454543D0000000000000000000000000000000000000000000000000000
+                000000000000000000005757576F585858F7595959FF585858FE585858FE5858
+                58FE575757F55050502000000000000000000000000000000000000000000000
+                00000000000000000000000000005252521F5858587D575757B3575757B85757
+                5790555555360000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000}
+              OnClick = SpeedButtonUBaseUpdateClick
+              WordWrap = False
+            end
             object Panel17: TPanel
               Left = 1
               Top = 1
@@ -689,12 +728,12 @@ object FormMain: TFormMain
               ParentFont = False
               ReadOnly = True
               TabOrder = 1
-              Text = #1047#1072#1075#1088#1091#1079#1082#1072'...'
+              Text = #1053#1077' '#1080#1079#1074#1077#1089#1090#1085#1086
             end
             object EditUVersion: TEdit
               Left = 130
-              Top = 38
-              Width = 471
+              Top = 39
+              Width = 447
               Height = 21
               BorderStyle = bsNone
               Font.Charset = DEFAULT_CHARSET
@@ -706,7 +745,7 @@ object FormMain: TFormMain
               ParentFont = False
               ReadOnly = True
               TabOrder = 2
-              Text = #1047#1072#1075#1088#1091#1079#1082#1072'...'
+              Text = #1053#1077' '#1080#1079#1074#1077#1089#1090#1085#1086
             end
             object PanelLoading: TPanel
               Left = 1
@@ -4961,8 +5000,6 @@ object FormMain: TFormMain
         Caption = #1055#1088#1077#1076#1084#1077#1090#1099
         ImageIndex = 1
         TabVisible = False
-        ExplicitWidth = 1009
-        ExplicitHeight = 694
         object Panel1: TPanel
           Left = 676
           Top = 0
@@ -4972,8 +5009,6 @@ object FormMain: TFormMain
           BevelOuter = bvNone
           ShowCaption = False
           TabOrder = 0
-          ExplicitLeft = 659
-          ExplicitHeight = 694
           object TableExItemProp: TTableEx
             Left = 0
             Top = 130
@@ -5045,7 +5080,6 @@ object FormMain: TFormMain
               BevelOuter = bvNone
               Color = clRed
               TabOrder = 0
-              ExplicitHeight = 132
               object Shape7: TShape
                 Left = 0
                 Top = 0
@@ -5103,7 +5137,6 @@ object FormMain: TFormMain
               Color = clWhite
               ParentBackground = False
               TabOrder = 1
-              ExplicitHeight = 132
               object Shape8: TShape
                 Left = -2
                 Top = 0
@@ -5125,11 +5158,9 @@ object FormMain: TFormMain
                 Align = alTop
                 BevelEdges = [beBottom]
                 BevelOuter = bvNone
-                Color = clSilver
+                Color = 15856370
                 ParentBackground = False
                 TabOrder = 0
-                ExplicitTop = 0
-                ExplicitWidth = 220
                 object Label9: TLabel
                   AlignWithMargins = True
                   Left = 3
@@ -5167,8 +5198,6 @@ object FormMain: TFormMain
                   ReadOnly = True
                   TabOrder = 0
                   TextHint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1087#1088#1077#1076#1084#1077#1090
-                  ExplicitLeft = 54
-                  ExplicitWidth = 163
                 end
               end
               object Panel8: TPanel
@@ -5184,11 +5213,9 @@ object FormMain: TFormMain
                 Align = alTop
                 BevelEdges = [beBottom]
                 BevelOuter = bvNone
-                Color = clActiveBorder
+                Color = 15198440
                 ParentBackground = False
                 TabOrder = 1
-                ExplicitTop = 25
-                ExplicitWidth = 220
                 object Label13: TLabel
                   AlignWithMargins = True
                   Left = 3
@@ -5226,9 +5253,6 @@ object FormMain: TFormMain
                   ReadOnly = True
                   TabOrder = 0
                   TextHint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1087#1088#1077#1076#1084#1077#1090
-                  ExplicitLeft = 46
-                  ExplicitTop = -16
-                  ExplicitWidth = 163
                 end
               end
               object Panel9: TPanel
@@ -5244,11 +5268,9 @@ object FormMain: TFormMain
                 Align = alTop
                 BevelEdges = [beBottom]
                 BevelOuter = bvNone
-                Color = clSilver
+                Color = 15856370
                 ParentBackground = False
                 TabOrder = 2
-                ExplicitTop = 50
-                ExplicitWidth = 220
                 object Label14: TLabel
                   AlignWithMargins = True
                   Left = 3
@@ -5286,8 +5308,6 @@ object FormMain: TFormMain
                   ReadOnly = True
                   TabOrder = 0
                   TextHint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1087#1088#1077#1076#1084#1077#1090
-                  ExplicitLeft = 54
-                  ExplicitWidth = 163
                 end
               end
             end
@@ -5304,8 +5324,6 @@ object FormMain: TFormMain
           BevelOuter = bvNone
           ShowCaption = False
           TabOrder = 1
-          ExplicitWidth = 659
-          ExplicitHeight = 694
           object TableExItems: TTableEx
             Left = 0
             Top = 30
@@ -5345,11 +5363,14 @@ object FormMain: TFormMain
             ColumnsFont.Height = -11
             ColumnsFont.Name = 'Tahoma'
             ColumnsFont.Style = []
-            ExplicitTop = 55
-            ExplicitWidth = 657
-            ExplicitHeight = 639
             ColWidths = (
               515)
+            RowHeights = (
+              32
+              32
+              32
+              32
+              32)
           end
           object Panel3: TPanel
             Left = 0
@@ -5361,10 +5382,8 @@ object FormMain: TFormMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitTop = 28
-            ExplicitWidth = 657
             object sSpeedButton1: TsSpeedButton
-              Left = 443
+              Left = 353
               Top = 0
               Width = 23
               Height = 30
@@ -5412,10 +5431,11 @@ object FormMain: TFormMain
             object EditSearchItem: TEdit
               AlignWithMargins = True
               Left = 65
-              Top = 3
-              Width = 378
-              Height = 24
+              Top = 5
+              Width = 288
+              Height = 22
               Margins.Left = 5
+              Margins.Top = 5
               Margins.Right = 0
               Align = alClient
               AutoSize = False
@@ -5423,7 +5443,7 @@ object FormMain: TFormMain
               BevelOuter = bvNone
               BorderStyle = bsNone
               Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
+              Font.Color = 2697513
               Font.Height = -16
               Font.Name = 'Tahoma'
               Font.Style = []
@@ -5432,32 +5452,33 @@ object FormMain: TFormMain
               TextHint = #1055#1086#1080#1089#1082'...'
               OnChange = EditSearchItemChange
               OnKeyPress = EditSearchItemKeyPress
-              ExplicitLeft = 5
-              ExplicitTop = 31
-              ExplicitWidth = 647
-              ExplicitHeight = 21
+              ExplicitTop = 3
+              ExplicitWidth = 378
+              ExplicitHeight = 24
             end
             object ComboBoxItemGroups: TComboBox
-              Left = 466
+              Left = 376
               Top = 0
-              Width = 210
+              Width = 300
               Height = 29
               Margins.Right = 6
               Align = alRight
               BevelKind = bkFlat
               BevelOuter = bvNone
+              Style = csDropDownList
               Ctl3D = True
               DropDownCount = 20
               Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
+              Font.Color = 2697513
               Font.Height = -17
               Font.Name = 'Tahoma'
               Font.Style = []
               ParentCtl3D = False
               ParentFont = False
               TabOrder = 1
+              TabStop = False
               OnChange = ComboBoxItemGroupsChange
-              ExplicitLeft = 476
+              ExplicitLeft = 466
             end
             object Panel25: TPanel
               Left = 0
@@ -5472,6 +5493,7 @@ object FormMain: TFormMain
                 Top = 0
                 Width = 30
                 Height = 30
+                Hint = #1055#1088#1077#1076#1099#1076#1091#1097#1080#1081' '#1074#1099#1073#1088#1072#1085#1085#1099#1081' '#1087#1088#1077#1076#1084#1077#1090
                 Align = alLeft
                 Flat = True
                 Glyph.Data = {
@@ -5556,6 +5578,7 @@ object FormMain: TFormMain
                 Top = 0
                 Width = 30
                 Height = 30
+                Hint = #1057#1083#1077#1076#1091#1102#1097#1080#1081' '#1074#1099#1073#1088#1072#1085#1085#1099#1081' '#1087#1088#1077#1076#1084#1077#1090
                 Align = alLeft
                 Flat = True
                 Glyph.Data = {
@@ -5644,8 +5667,6 @@ object FormMain: TFormMain
         Caption = #1058#1088#1072#1085#1089#1087#1086#1088#1090
         ImageIndex = 2
         TabVisible = False
-        ExplicitWidth = 1009
-        ExplicitHeight = 694
         object Panel2: TPanel
           Left = 676
           Top = 0
@@ -5655,8 +5676,6 @@ object FormMain: TFormMain
           BevelOuter = bvNone
           ShowCaption = False
           TabOrder = 0
-          ExplicitLeft = 659
-          ExplicitHeight = 694
           object Panel10: TPanel
             Left = 0
             Top = 0
@@ -5756,11 +5775,9 @@ object FormMain: TFormMain
                 Align = alTop
                 BevelEdges = [beBottom]
                 BevelOuter = bvNone
-                Color = clSilver
+                Color = 15856370
                 ParentBackground = False
                 TabOrder = 0
-                ExplicitTop = 0
-                ExplicitWidth = 220
                 object Label16: TLabel
                   AlignWithMargins = True
                   Left = 3
@@ -5798,8 +5815,6 @@ object FormMain: TFormMain
                   ReadOnly = True
                   TabOrder = 0
                   TextHint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1090#1088#1072#1085#1089#1087#1086#1088#1090
-                  ExplicitLeft = 59
-                  ExplicitWidth = 158
                 end
               end
               object Panel14: TPanel
@@ -5815,11 +5830,9 @@ object FormMain: TFormMain
                 Align = alTop
                 BevelEdges = [beBottom]
                 BevelOuter = bvNone
-                Color = clActiveBorder
+                Color = 15198440
                 ParentBackground = False
                 TabOrder = 1
-                ExplicitTop = 25
-                ExplicitWidth = 220
                 object Label17: TLabel
                   AlignWithMargins = True
                   Left = 3
@@ -5857,8 +5870,6 @@ object FormMain: TFormMain
                   ReadOnly = True
                   TabOrder = 0
                   TextHint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1090#1088#1072#1085#1089#1087#1086#1088#1090
-                  ExplicitLeft = 59
-                  ExplicitWidth = 158
                 end
               end
               object Panel15: TPanel
@@ -5874,11 +5885,9 @@ object FormMain: TFormMain
                 Align = alTop
                 BevelEdges = [beBottom]
                 BevelOuter = bvNone
-                Color = clSilver
+                Color = 15856370
                 ParentBackground = False
                 TabOrder = 2
-                ExplicitTop = 50
-                ExplicitWidth = 220
                 object Label18: TLabel
                   AlignWithMargins = True
                   Left = 3
@@ -5916,8 +5925,6 @@ object FormMain: TFormMain
                   ReadOnly = True
                   TabOrder = 0
                   TextHint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1090#1088#1072#1085#1089#1087#1086#1088#1090
-                  ExplicitLeft = 59
-                  ExplicitWidth = 158
                 end
               end
             end
@@ -5983,7 +5990,6 @@ object FormMain: TFormMain
           BevelOuter = bvNone
           ShowCaption = False
           TabOrder = 1
-          ExplicitHeight = 714
           object TableExVehicles: TTableEx
             Left = 0
             Top = 30
@@ -6023,11 +6029,14 @@ object FormMain: TFormMain
             ColumnsFont.Height = -11
             ColumnsFont.Name = 'Tahoma'
             ColumnsFont.Style = []
-            ExplicitTop = 55
-            ExplicitWidth = 657
-            ExplicitHeight = 639
             ColWidths = (
               515)
+            RowHeights = (
+              32
+              32
+              32
+              32
+              32)
           end
           object Panel23: TPanel
             Left = 0
@@ -6039,10 +6048,8 @@ object FormMain: TFormMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitTop = 36
-            ExplicitWidth = 657
             object sSpeedButton2: TsSpeedButton
-              Left = 443
+              Left = 353
               Top = 0
               Width = 23
               Height = 30
@@ -6090,10 +6097,11 @@ object FormMain: TFormMain
             object EditSearchVehicle: TEdit
               AlignWithMargins = True
               Left = 5
-              Top = 3
-              Width = 438
-              Height = 24
+              Top = 5
+              Width = 348
+              Height = 22
               Margins.Left = 5
+              Margins.Top = 5
               Margins.Right = 0
               Align = alClient
               AutoSize = False
@@ -6110,20 +6118,22 @@ object FormMain: TFormMain
               TextHint = #1055#1086#1080#1089#1082'...'
               OnChange = EditSearchVehicleChange
               OnKeyPress = EditSearchVehicleKeyPress
-              ExplicitLeft = 2
-              ExplicitTop = 0
-              ExplicitWidth = 629
+              ExplicitTop = 3
+              ExplicitWidth = 438
+              ExplicitHeight = 24
             end
             object ComboBoxVehicleGroup: TComboBox
-              Left = 466
+              Left = 376
               Top = 0
-              Width = 210
+              Width = 300
               Height = 29
               Margins.Right = 6
               Align = alRight
               BevelKind = bkFlat
               BevelOuter = bvNone
+              Style = csDropDownList
               Ctl3D = True
+              DropDownCount = 15
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -17
@@ -6132,8 +6142,9 @@ object FormMain: TFormMain
               ParentCtl3D = False
               ParentFont = False
               TabOrder = 1
+              TabStop = False
               OnChange = ComboBoxVehicleGroupChange
-              ExplicitLeft = 496
+              ExplicitLeft = 466
             end
           end
         end
@@ -6142,8 +6153,6 @@ object FormMain: TFormMain
         Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099
         ImageIndex = 3
         TabVisible = False
-        ExplicitWidth = 1009
-        ExplicitHeight = 694
         DesignSize = (
           1026
           712)
@@ -6165,8 +6174,6 @@ object FormMain: TFormMain
           Anchors = [akRight, akBottom]
           Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
           TabOrder = 0
-          ExplicitLeft = 924
-          ExplicitTop = 662
         end
         object Panel27: TPanel
           Left = 0
@@ -6178,10 +6185,6 @@ object FormMain: TFormMain
           Color = clSilver
           ParentBackground = False
           TabOrder = 1
-          ExplicitLeft = 104
-          ExplicitTop = 136
-          ExplicitWidth = 185
-          ExplicitHeight = 41
           DesignSize = (
             1026
             712)
@@ -6338,8 +6341,6 @@ object FormMain: TFormMain
               BevelKind = bkFlat
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitTop = 509
-              ExplicitWidth = 553
               DesignSize = (
                 697
                 43)
@@ -6352,7 +6353,6 @@ object FormMain: TFormMain
                 Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100
                 TabOrder = 0
                 OnClick = ButtonSetApplyClick
-                ExplicitLeft = 387
               end
               object ButtonSetDefault: TButton
                 Left = 10
@@ -6372,7 +6372,6 @@ object FormMain: TFormMain
                 Caption = #1042#1077#1088#1085#1091#1090#1100
                 TabOrder = 2
                 OnClick = ButtonSetCancelClick
-                ExplicitLeft = 468
               end
             end
             object CheckBoxLangShowDef: TCheckBox
@@ -6383,6 +6382,15 @@ object FormMain: TFormMain
               Alignment = taLeftJustify
               Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1074' '#1089#1082#1086#1073#1082#1072#1093' '#1086#1088#1080#1075#1080#1085#1072#1083#1100#1085#1086#1077' '#1085#1072#1079#1074#1072#1085#1080#1077' '#1087#1088#1077#1076#1084#1077#1090#1072
               TabOrder = 2
+            end
+            object CheckBoxShowHints: TCheckBox
+              Left = 81
+              Top = 178
+              Width = 341
+              Height = 17
+              Alignment = taLeftJustify
+              Caption = #1055#1086#1082#1072#1079#1099#1074#1072#1090#1100' '#1087#1086#1076#1089#1082#1072#1079#1082#1080
+              TabOrder = 3
             end
           end
           object Panel24: TPanel
@@ -6411,8 +6419,6 @@ object FormMain: TFormMain
               Font.Name = 'Tahoma'
               Font.Style = []
               ParentFont = False
-              ExplicitLeft = 24
-              ExplicitTop = 6
               ExplicitWidth = 116
             end
             object Label10: TLabel
@@ -6686,7 +6692,7 @@ object FormMain: TFormMain
     Left = 838
     Top = 633
     Bitmap = {
-      494C01011C003800040420002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011C0038000C0420002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000000001000001002000000000000000
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -10917,10 +10923,6 @@ object FormMain: TFormMain
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
       000000000000}
   end
-  object OpenDialog: TOpenDialog
-    Left = 748
-    Top = 633
-  end
   object FileSaveDialog: TFileSaveDialog
     DefaultExtension = '*.lang'
     FavoriteLinks = <>
@@ -10932,5 +10934,9 @@ object FormMain: TFormMain
     Options = []
     Left = 656
     Top = 637
+  end
+  object OpenPictureDialog: TOpenPictureDialog
+    Left = 744
+    Top = 640
   end
 end
