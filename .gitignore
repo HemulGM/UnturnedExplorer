@@ -55,12 +55,22 @@
 *.identcache
 *.projdata
 *.tvsconfig
+*.groupproj
+desktop.ini
+*.rar
+*.db
+*.cmd
+*.zip
 *.dsk
 
 # Delphi history and backups
+Win32/
+Win64/
 __history/
 __recovery/
+BKC/
 *.~*
+*.lnk
 
 # Castalia statistics file (since XE7 Castalia is distributed with Delphi)
 *.stat
