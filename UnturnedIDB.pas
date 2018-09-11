@@ -2,10 +2,10 @@ unit UnturnedIDB;
 
 interface
  uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics, Vcl.Dialogs, Vcl.Imaging.pngimage,
-  System.Generics.Collections, System.JSON, System.Win.Registry,
-  SQLiteTable3, SQLite3, SQLLang, System.IniFiles, Winapi.WinInet;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes,
+  Vcl.Graphics, Vcl.Dialogs, Vcl.Imaging.pngimage, System.Generics.Collections,
+  System.JSON, System.Win.Registry, SQLiteTable3, SQLite3, SQLLang,
+  System.IniFiles, Winapi.WinInet;
 
  type
   //Уведомление о прогрессе загрузки
@@ -92,7 +92,7 @@ interface
 
  const
   //URL каталога с изображениями транспорта
-  urlVehicles = 'http://unturned.hemulgm.ru/unturned_explorer/ID_Images/Vehicles/'{1.png};
+  urlVehicles = 'http://unturned.hemulgm.ru/unturned_explorer/ID_Images/Vehicles/'{<ID>.png};
 
  type
   //Класс управления базой данных
@@ -129,14 +129,16 @@ interface
     function GetDataVehicles(var Items:TDisplayDataVehicles; Group:Integer = -1):Integer; //Получить список транспорта
     function GetGroupsItem(var Items:TGroups):Integer;                          //Получить список групп предметов
     function GetGroupsVehicles(var Items:TGroups):Integer;                      //Получить список групп транспорта
-    function GetItemData(const IID:Integer; var Item:TItemProperties):Boolean;  //Получить свойства предмета
-    function GetItemIcon(const IID:Integer; var BMP:TBitmap):Boolean;           //Получить иконку (32) предмета
-    function GetItemImage(const IID:Integer; var BMP:TBitmap):Boolean;          //Получить изображение (128) предмета
+    function GetItemData(const IID:Integer; var Item:TItemProperties; DBID:Boolean = True):Boolean;  //Получить свойства предмета
+    function GetItemIcon(const IID:Integer; var BMP:TPngImage; DBID:Boolean = True):Boolean;           //Получить иконку (32) предмета
+    function GetItemImage(const IID:Integer; var BMP:TPngImage; DBID:Boolean = True):Boolean;          //Получить изображение (128) предмета
     function GetVehicleData(const VID:Integer; var Item:TItemProperties):Boolean; //Получить свойства транспорта
-    function GetVehicleIcon(const ID:Integer; var BMP:TBitmap):Boolean;         //Получить иконку (32) транспорта
-    function GetVehicleImage(const ID:Integer; var BMP:TBitmap):Boolean;        //Получить изображение (128) транспорта
-    function SetVehicleImage(const ID:Integer; BMP:TBitmap):Boolean;            //Установить изображение и иконку транспорта
+    function GetVehicleIcon(const ID:Integer; var BMP:TPngImage):Boolean;         //Получить иконку (32) транспорта
+    function GetVehicleImage(const ID:Integer; var BMP:TPngImage):Boolean;        //Получить изображение (128) транспорта
+    function SetVehicleImage(const ID:Integer; BMP:TPngImage):Boolean;            //Установить изображение и иконку транспорта
+    function UnloadDataImages(ADir:string):Boolean;                             //Выгрузить изображения предметов
     function UnloadDataStrings(AFile:string):Boolean;                           //Выгрузить переводимые строки в файл
+    function UnloadVehicles(AFile:string):Boolean;                              //Выгрузить транспорт
     procedure DropTables;                                                       //Очистить таблицы (кроме изобр. транспорта)
     procedure DropVehiclesImages;                                               //Очистить таблицу изображений транспорта
     procedure LoadLang(LangFileName:string);                                    //Загрузить перевод
@@ -187,7 +189,7 @@ interface
   pathItems = '\Bundles\Items\';
   //Путь к транспорту
   pathVehicles = '\Bundles\Vehicles\';
-  //
+  //Путь к картам
   pathMaps = '\Maps\';
   //Типа файлов предметов и транспорта
   pathItemsData = '.dat';
@@ -336,7 +338,7 @@ begin
  RegProp('Strong', 'Сила', False);
  RegProp('Slot', 'Слоты', False);
  RegProp('Rarity', 'Редкость', False);
- RegProp('Pro', 'Специальный', True);
+ RegProp('Pro', 'Скин', True);
  RegProp('Useable', 'Использование', False);
  RegProp('Food_Constrains_Water', 'Уменьшает жажду', True);
  RegProp('Action_0_Key Craft_Seed', 'Содержит семена', True);
@@ -514,8 +516,8 @@ var str:string;
     PNGRect:TRect;
     IconFile:Integer;
     PNG:TPngImage;
-    B32:Tbitmap;
-    B128:Tbitmap;
+    B32:TPngImage;
+    B128:TPngImage;
     Stream:TMemoryStream;
     DI:TDataItem;
 begin
@@ -548,9 +550,29 @@ begin
        PNGRect.Height:=32;
       end;
     OffsetRect(PNGRect, Round((32 / 2) - (PNGRect.Width / 2)), Round((32 / 2) - (PNGRect.Height / 2)));
-    B32:=TBitmap.Create;
-    B32.SetSize(32, 32);
+    B32:=TPngImage.CreateBlank(COLOR_RGB, 16, 32, 32);
+    B32.Canvas.Brush.Color:=clWhite;
+    B32.Canvas.Brush.Style:=bsSolid;
+    B32.Canvas.FillRect(Rect(0, 0, 32, 32));
+    //B32.SetSize(32, 32);
     B32.Canvas.StretchDraw(PNGRect, PNG);
+    B32.Canvas.Draw(0, 0, PNG, 0);
+    Stream:=TMemoryStream.Create;
+    B32.SaveToStream(Stream);
+    Stream.Position:=0;
+    //SQL.UpdateBlob(FSQLBase, tnItems, 'Icon', 'IID = '+IntToStr(DI.IID), Stream);
+    with SQL.UpdateBlob(tnItems) do
+     begin
+      BlobField:='Icon';
+      WhereFieldEqual('IID', DI.IID);
+      FSQLBase.UpdateBlob(GetSQL, Stream);
+      EndCreate;
+     end;
+    Stream.Clear;
+    B32.Free;
+
+    //--------------------------------------------------------------------------
+
     //128x128
     PNGRect.Left:=0;
     PNGRect.Top:=0;
@@ -573,24 +595,29 @@ begin
     OffsetRect(PNGRect, Round((128 / 2) - (PNGRect.Width / 2)), Round((128 / 2) - (PNGRect.Height / 2)));
     //PNGRect.Top:=Round((128 / 2) - (PNGRect.Height / 2));
     //PNGRect.Left:=Round((128 / 2) - (PNGRect.Width / 2));
-    B128:=TBitmap.Create;
-    B128.SetSize(128, 128);
+    B128:=TPngImage.CreateBlank(COLOR_RGB, 16, 128, 128);
+    //B128.SetSize(128, 128);
+    B128.Canvas.Brush.Color:=clWhite;
+    B128.Canvas.Brush.Style:=bsSolid;
+    B128.Canvas.FillRect(Rect(0, 0, 128, 128));
     B128.Canvas.StretchDraw(PNGRect, PNG);
     PNG.Free;
+
+
 
     Stream:=TMemoryStream.Create;
     B128.SaveToStream(Stream);
     Stream.Position:=0;
-    SQL.UpdateBlob(FSQLBase, tnItems, 'Image', 'IID = '+IntToStr(DI.IID), Stream);
+    //SQL.UpdateBlob(FSQLBase, tnItems, 'Image', 'IID = '+IntToStr(DI.IID), Stream);
+    with SQL.UpdateBlob(tnItems) do
+     begin
+      BlobField:='Image';
+      WhereFieldEqual('IID', DI.IID);
+      FSQLBase.UpdateBlob(GetSQL, Stream);
+      EndCreate;
+     end;
     Stream.Clear;
     B128.Free;
-
-    Stream:=TMemoryStream.Create;
-    B32.SaveToStream(Stream);
-    Stream.Position:=0;
-    SQL.UpdateBlob(FSQLBase, tnItems, 'Icon', 'IID = '+IntToStr(DI.IID), Stream);
-    Stream.Clear;
-    B32.Free;
    except
 
    end;
@@ -811,7 +838,7 @@ begin
   begin
    TableName:=tnVehiclesGroups;
    AddField('GID');
-   Where:='Desc = '+QuotedStr(Result.Engine);
+   WhereFieldEqual('Desc', Result.Engine);
    Table:=FSQLBase.GetTable(GetSQL);
    EndCreate;
   end;
@@ -945,11 +972,11 @@ begin
  end;
 end;
 
-function TUnturnedItemBase.SetVehicleImage(const ID:Integer; BMP:TBitmap): Boolean;
+function TUnturnedItemBase.SetVehicleImage(const ID:Integer; BMP:TPngImage): Boolean;
 var VDID:Integer;
     Stream:TMemoryStream;
     PNGRect:TRect;
-    B32, B128:TBitmap;
+    B32, B128:TPngImage;
 begin
  Result:=False;
  try
@@ -973,8 +1000,10 @@ begin
      PNGRect.Height:=32;
     end;
   OffsetRect(PNGRect, Round((32 / 2) - (PNGRect.Width / 2)), Round((32 / 2) - (PNGRect.Height / 2)));
-  B32:=TBitmap.Create;
-  B32.SetSize(32, 32);
+  B32:=TPngImage.CreateBlank(COLOR_RGB, 16, 32, 32);
+  B32.Canvas.Brush.Color:=clWhite;
+  B32.Canvas.FillRect(Rect(0, 0 ,32, 32));
+  //B32.SetSize(32, 32);
   B32.Canvas.StretchDraw(PNGRect, BMP);
   //128x128
   PNGRect.Left:=0;
@@ -996,13 +1025,14 @@ begin
      PNGRect.Height:=128;
     end;
   OffsetRect(PNGRect, Round((128 / 2) - (PNGRect.Width / 2)), Round((128 / 2) - (PNGRect.Height / 2)));
-  B128:=TBitmap.Create;
-  B128.SetSize(128, 128);
+  B128:=TPngImage.CreateBlank(COLOR_RGB, 16, 128, 128);
+  B128.Canvas.Brush.Color:=clWhite;
+  B128.Canvas.FillRect(Rect(0, 0, 128, 128));
   B128.Canvas.StretchDraw(PNGRect, BMP);
   with SQL.Delete do
    begin
     TableName:=tnVehiclesImages;
-    Where:='ID = '+IntToStr(ID);
+    WhereFieldEqual('ID', ID);
     FSQLBase.ExecSQL(GetSQL);
     EndCreate;
    end;
@@ -1016,14 +1046,28 @@ begin
     Stream:=TMemoryStream.Create;
     B128.SaveToStream(Stream);
     Stream.Position:=0;
-    SQL.UpdateBlob(FSQLBase, tnVehiclesImages, 'Image', 'VDID = '+QuotedStr(IntToStr(VDID)), Stream);
+    //SQL.UpdateBlob(FSQLBase, tnVehiclesImages, 'Image', 'VDID = '+QuotedStr(IntToStr(VDID)), Stream);
+    with SQL.UpdateBlob(tnVehiclesImages) do
+     begin
+      BlobField:='Image';
+      WhereFieldEqual('VDID', VDID);
+      FSQLBase.UpdateBlob(GetSQL, Stream);
+      EndCreate;
+     end;
     Stream.Free;
     B128.Free;
 
     Stream:=TMemoryStream.Create;
     B32.SaveToStream(Stream);
     Stream.Position:=0;
-    SQL.UpdateBlob(FSQLBase, tnVehiclesImages, 'Icon', 'VDID = '+QuotedStr(IntToStr(VDID)), Stream);
+    //SQL.UpdateBlob(FSQLBase, tnVehiclesImages, 'Icon', 'VDID = '+QuotedStr(IntToStr(VDID)), Stream);
+    with SQL.UpdateBlob(tnVehiclesImages) do
+     begin
+      BlobField:='Icon';
+      WhereFieldEqual('VDID', VDID);
+      FSQLBase.UpdateBlob(GetSQL, Stream);
+      EndCreate;
+     end;
     Stream.Free;
     B32.Free;
 
@@ -1034,9 +1078,42 @@ begin
  end;
 end;
 
+function TUnturnedItemBase.UnloadDataImages(ADir: string): Boolean;
+var Mem:TMemoryStream;
+    PNG:TPngImage;
+begin
+ Result:=False;
+ PNG:=TPngImage.Create;
+ with SQL.Select do
+  begin
+   TableName:=tnItems;
+   AddField('ID');
+   AddField('Image');
+   with FSQLBase.GetTable(GetSQL) do
+    begin
+     while not Eof do
+      begin
+       Mem:=FieldAsBlob(1);
+       if Mem <> nil then
+        begin
+         Mem.Position:=0;
+         PNG.LoadFromStream(Mem);
+         PNG.SaveToFile(ADir+'\'+FieldAsString(0)+'.png');
+         Mem.Clear;
+         Result:=True;
+        end;
+       Next;
+      end;
+     Free;
+    end;
+   EndCreate;
+  end;
+ PNG.Free;
+end;
+
 function TUnturnedItemBase.UnloadDataStrings(AFile: string): Boolean;
 var FileStrings:TStringList;
-    Abc:set of Char;
+    Abc:TSysCharSet;
     Str:string;
 begin
  FileStrings:=TStringList.Create;
@@ -1047,11 +1124,12 @@ begin
    TableName:=tnItems;
    AddField('ID');
    AddField('Desc');
+   AddField('GID');
    with FSQLBase.GetTable(GetSQL) do
     begin
      while not Eof do
       begin
-       FileStrings.Add(FieldAsString(0)+#9+FieldAsString(1));
+       FileStrings.Add(FieldAsString(0)+#9+FieldAsString(1)+#9+FieldAsString(2));
        Next;
       end;
      Free;
@@ -1068,7 +1146,7 @@ begin
      while not Eof do
       begin
        str:=FieldAsString(0);
-       if str.Length > 0 then if Str[1] in Abc then
+       if str.Length > 0 then if CharInSet(Str[1], Abc) then
         FileStrings.Add(str);
        Next;
       end;
@@ -1086,6 +1164,23 @@ begin
      while not Eof do
       begin
        FileStrings.Add(FieldAsString(0));
+       Next;
+      end;
+     Free;
+    end;
+   EndCreate;
+  end;
+ FileStrings.Add('['+tnItemGroups+']');
+ with SQL.Select do
+  begin
+   TableName:=tnItemGroups;
+   AddField('GID');
+   AddField('Desc');
+   with FSQLBase.GetTable(GetSQL) do
+    begin
+     while not Eof do
+      begin
+       FileStrings.Add(FieldAsString(0)+#9+FLangIni.ReadString(tnItemGroups, FieldAsString(1), FieldAsString(1)));
        Next;
       end;
      Free;
@@ -1119,7 +1214,7 @@ begin
      while not Eof do
       begin
        str:=FieldAsString(0);
-       if str.Length > 0 then if Str[1] in Abc then
+       if str.Length > 0 then if CharInSet(Str[1], Abc) then
         FileStrings.Add(str);
        Next;
       end;
@@ -1148,6 +1243,35 @@ begin
  Result:=True;
 end;
 
+function TUnturnedItemBase.UnloadVehicles(AFile: string): Boolean;
+var FileStrings:TStringList;
+begin
+ FileStrings:=TStringList.Create;
+ with SQL.Select do
+  begin
+   TableName:=tnVehicles;
+   AddField('ID');
+   AddField('Desc');
+   with FSQLBase.GetTable(GetSQL) do
+    begin
+     while not Eof do
+      begin
+       FileStrings.Add('<Vehicle>');
+       FileStrings.Add('<Id>'+FieldAsString(0)+'</Id>');
+       FileStrings.Add('<Name>'+FLangIni.ReadString(tnVehicles, FieldAsString(0), FieldAsString(1))+'</Name>');
+       FileStrings.Add('</Vehicle>');
+       Next;
+      end;
+     Free;
+    end;
+   EndCreate;
+  end;
+
+ FileStrings.SaveToFile(AFile);
+ FileStrings.Free;
+ Result:=True;
+end;
+
 function TUnturnedItemBase.GetVehicleData(const VID: Integer; var Item: TItemProperties): Boolean;
 var Table:TSQLiteTable;
     Prop:TItemPorp;
@@ -1160,7 +1284,7 @@ begin
    AddField('Desc');
    AddField('IsID');
    AddField('Value');
-   Where:='VID = '+IntToStr(VID);
+   WhereFieldEqual('VID', VID);
    Table:=FSQLBase.GetTable(GetSQL);
    EndCreate;
   end;
@@ -1183,7 +1307,7 @@ begin
  Table.Free;
 end;
 
-function TUnturnedItemBase.GetVehicleIcon(const ID:Integer; var BMP:TBitmap): Boolean;
+function TUnturnedItemBase.GetVehicleIcon(const ID:Integer; var BMP:TPngImage): Boolean;
 var Table:TSQLiteTable;
     Mem:TMemoryStream;
 begin
@@ -1192,7 +1316,7 @@ begin
   begin
    TableName:=tnVehiclesImages;
    AddField('Icon');
-   Where:=IntToStr(ID)+' = ID';
+   WhereFieldEqual('ID', ID);
    Table:=FSQLBase.GetTable(GetSQL);
    EndCreate;
   end;
@@ -1210,7 +1334,7 @@ begin
  Table.Free;
 end;
 
-function TUnturnedItemBase.GetVehicleImage(const ID:Integer; var BMP:TBitmap):Boolean;
+function TUnturnedItemBase.GetVehicleImage(const ID:Integer; var BMP:TPngImage):Boolean;
 var Table:TSQLiteTable;
     Mem:TMemoryStream;
 begin
@@ -1219,7 +1343,7 @@ begin
   begin
    TableName:=tnVehiclesImages;
    AddField('Image');
-   Where:=IntToStr(ID)+' = ID';
+   WhereFieldEqual('ID', ID);
    Table:=FSQLBase.GetTable(GetSQL);
    EndCreate;
   end;
@@ -1285,7 +1409,6 @@ var hSession, hfile:hInternet;
     FVehicles:TDisplayDataVehicles;
     i: Integer;
     PNG:TPngImage;
-    BMP:TBitmap;
 begin
  if Pos('http://', AnsiLowerCase(urlDir)) <> 1 then urlDir:= 'http://'+urlDir;
  hSession:=InternetOpen('UExplorer', INTERNET_OPEN_TYPE_PRECONFIG, nil, nil, 0);
@@ -1315,18 +1438,14 @@ begin
      Stream.Position:=0;
      if Stream.Size > 0 then
       begin
-       BMP:=TBitmap.Create;
        PNG:=TPngImage.Create;
        try
         PNG.LoadFromStream(Stream);
-        BMP.SetSize(PNG.Width, PNG.Height);
-        BMP.Canvas.Draw(0, 0, PNG);
-        SetVehicleImage(FVehicles[i].ID, BMP);
+        SetVehicleImage(FVehicles[i].ID, PNG);
        except
 
        end;
        PNG.Free;
-       BMP.Free;
       end;
      Stream.Free;
     end;
@@ -1525,7 +1644,7 @@ begin
   begin
    TableName:=tnInfoData;
    AddField('Value');
-   Where:='Key = ''Version''';
+   WhereFieldEqual('Key', 'Version');
    FVersion:=FSQLBase.GetTableString(GetSQL);
    EndCreate;
   end;
@@ -1550,7 +1669,7 @@ begin
  Items.Clear;
  SelQuery:='SELECT IID, ID, ITEMS.Desc, ITEMGROUPS.Desc FROM ITEMS INNER JOIN ITEMGROUPS ON ITEMS.GID = ITEMGROUPS.GID';
  if Group <> -1 then SelQuery:=SelQuery+' WHERE ITEMS.GID = '+QuotedStr(IntToStr(Group));
- SelQuery:=SelQuery+' ORDER BY ITEMS.GID, ITEMS.ID';
+ SelQuery:=SelQuery+' ORDER BY ITEMS.ID';
 
  Table:=FSQLBase.GetTable(SelQuery);
  while not Table.EOF do
@@ -1687,7 +1806,7 @@ begin
  Table.Free;
 end;
 
-function TUnturnedItemBase.GetItemData(const IID: Integer; var Item: TItemProperties):Boolean;
+function TUnturnedItemBase.GetItemData(const IID: Integer; var Item: TItemProperties; DBID:Boolean = True):Boolean;
 var Table:TSQLiteTable;
     Prop:TItemPorp;
     LangStr:string;
@@ -1699,7 +1818,9 @@ begin
    AddField('Desc');
    AddField('IsID');
    AddField('Value');
-   Where:='IID = '+IntToStr(IID);
+   if DBID then
+    WhereFieldEqual('IID', IID)
+   else WhereFieldEqual('ID', IID);
    Table:=FSQLBase.GetTable(GetSQL);
    EndCreate;
   end;
@@ -1722,7 +1843,7 @@ begin
  Table.Free;
 end;
 
-function TUnturnedItemBase.GetItemIcon(const IID: Integer; var BMP:TBitmap): Boolean;
+function TUnturnedItemBase.GetItemIcon(const IID: Integer; var BMP:TPngImage; DBID:Boolean = True): Boolean;
 var Table:TSQLiteTable;
     Mem:TMemoryStream;
 begin
@@ -1731,7 +1852,9 @@ begin
   begin
    TableName:=tnItems;
    AddField('Icon');
-   Where:='IID = '+IntToStr(IID);
+   if DBID then
+    WhereFieldEqual('IID', IID)
+   else WhereFieldEqual('ID', IID);
    Table:=FSQLBase.GetTable(GetSQL);
    EndCreate;
   end;
@@ -1749,7 +1872,7 @@ begin
  Table.Free;
 end;
 
-function TUnturnedItemBase.GetItemImage(const IID: Integer; var BMP:TBitmap): Boolean;
+function TUnturnedItemBase.GetItemImage(const IID: Integer; var BMP:TPngImage; DBID:Boolean = True): Boolean;
 var Table:TSQLiteTable;
     Mem:TMemoryStream;
 begin
@@ -1758,7 +1881,9 @@ begin
   begin
    TableName:=tnItems;
    AddField('Image');
-   Where:='IID = '+IntToStr(IID);
+   if DBID then
+    WhereFieldEqual('IID', IID)
+   else WhereFieldEqual('ID', IID);
    Table:=FSQLBase.GetTable(GetSQL);
    EndCreate;
   end;

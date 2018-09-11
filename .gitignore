@@ -68,9 +68,10 @@ Win32/
 Win64/
 __history/
 __recovery/
-BKC/
+BCK/
 *.~*
 *.lnk
 
 # Castalia statistics file (since XE7 Castalia is distributed with Delphi)
 *.stat
+*.smm

@@ -42,12 +42,16 @@ object FormMain: TFormMain
       Top = -6
       Width = 1034
       Height = 722
-      ActivePage = TabSheetVehicle
+      ActivePage = TabSheetItems
       Anchors = [akLeft, akTop, akRight, akBottom]
       TabOrder = 0
       object TabSheetManage: TTabSheet
         Caption = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object PanelCtrCllient: TPanel
           Left = 0
           Top = 0
@@ -356,7 +360,7 @@ object FormMain: TFormMain
             object ButtonReload: TsSpeedButton
               Left = 2
               Top = 133
-              Width = 287
+              Width = 240
               Height = 44
               Caption = #1054#1073#1085#1086#1074#1080#1090#1100' '#1073#1072#1079#1091
               Flat = True
@@ -501,11 +505,11 @@ object FormMain: TFormMain
               WordWrap = False
             end
             object SpeedButtonLoadVehImages: TsSpeedButton
-              Left = 288
+              Left = 248
               Top = 133
-              Width = 320
+              Width = 360
               Height = 44
-              Caption = #1054#1073#1085#1086#1074#1080#1090#1100' '#1073#1072#1079#1091' '#1080#1079#1086#1073#1088#1072#1078#1077#1085#1080#1081
+              Caption = #1054#1073#1085#1086#1074#1080#1090#1100' '#1073#1072#1079#1091' '#1080#1079#1086#1073#1088#1072#1078#1077#1085#1080#1081' '#1090#1088#1072#1085#1089#1087#1086#1088#1090#1072
               Flat = True
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
@@ -750,18 +754,18 @@ object FormMain: TFormMain
             object PanelLoading: TPanel
               Left = 1
               Top = 84
-              Width = 600
+              Width = 603
               Height = 44
               BevelOuter = bvNone
               TabOrder = 3
               Visible = False
               DesignSize = (
-                600
+                603
                 44)
               object LabelCurrentLoad: TLabel
                 Left = 7
                 Top = 25
-                Width = 594
+                Width = 593
                 Height = 13
                 AutoSize = False
                 Font.Charset = DEFAULT_CHARSET
@@ -774,7 +778,7 @@ object FormMain: TFormMain
               object ProgressBarGeneral: TProgressBar
                 Left = 7
                 Top = 9
-                Width = 590
+                Width = 593
                 Height = 10
                 Anchors = [akLeft, akTop, akRight]
                 TabOrder = 0
@@ -864,10 +868,11 @@ object FormMain: TFormMain
               AutoSize = False
               Caption = 
                 #1044#1072#1085#1085#1072#1103' '#1087#1088#1086#1075#1088#1072#1084#1084#1072' '#1087#1088#1077#1076#1085#1072#1079#1085#1072#1095#1077#1085#1072' '#1076#1083#1103' '#1087#1086#1083#1091#1095#1077#1085#1080#1103' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1080' '#1086#1073' '#1080#1075#1088#1086#1074 +
-                #1099#1093' '#1074#1077#1097#1072#1093' '#1080#1090#1088#1072#1085#1089#1087#1086#1088#1090#1077' '#1074' '#1080#1075#1088#1077' Unturned.'#13#10#1069#1090#1086' '#1085#1077' '#1087#1088#1086#1089#1090#1086' '#1089#1090#1072#1090#1080#1095#1085#1072#1103' '#1073 +
-                #1072#1079#1072', '#1076#1072#1085#1085#1072#1103' '#1087#1088#1086#1075#1088#1072#1084#1084#1072' '#1079#1072#1075#1088#1091#1078#1072#1077#1090' '#1074#1089#1102' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1102' '#1080#1079' '#1082#1072#1090#1072#1083#1086#1075#1072' '#1089' '#1074#1072#1096 +
-                #1077#1081' '#1080#1075#1088#1086#1081', '#1087#1086' '#1101#1090#1086#1084#1091' '#1088#1072#1073#1086#1090#1072#1077#1090' '#1090#1086#1083#1100#1082#1086' '#1087#1088#1080' '#1085#1072#1083#1080#1095#1080#1077' '#1091#1089#1090#1072#1085#1086#1074#1083#1077#1085#1086#1081' '#1080#1075#1088#1099 +
-                ' Unturned.'
+                #1099#1093' '#1074#1077#1097#1072#1093' '#1080' '#1090#1088#1072#1085#1089#1087#1086#1088#1090#1077' '#1074' '#1080#1075#1088#1077' Unturned.'#13#10#1069#1090#1086' '#1085#1077' '#1087#1088#1086#1089#1090#1086' '#1089#1090#1072#1090#1080#1095#1085#1072#1103' ' +
+                #1073#1072#1079#1072', '#1076#1072#1085#1085#1072#1103' '#1087#1088#1086#1075#1088#1072#1084#1084#1072' '#1079#1072#1075#1088#1091#1078#1072#1077#1090' '#1074#1089#1102' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1102' '#1080#1079' '#1082#1072#1090#1072#1083#1086#1075#1072' '#1089' '#1074#1072 +
+                #1096#1077#1081' '#1080#1075#1088#1086#1081', '#1087#1086' '#1101#1090#1086#1084#1091' '#1088#1072#1073#1086#1090#1072#1077#1090' '#1090#1086#1083#1100#1082#1086' '#1087#1088#1080' '#1085#1072#1083#1080#1095#1080#1077' '#1091#1089#1090#1072#1085#1086#1074#1083#1077#1085#1086#1081' '#1080#1075#1088 +
+                #1099' Unturned.'#13#10#1044#1083#1103' '#1087#1086#1083#1091#1095#1077#1085#1080#1103' '#1085#1086#1074#1099#1093' '#1076#1072#1085#1085#1099#1093', '#1086#1073#1085#1086#1074#1080#1090#1077' '#1080#1075#1088#1091' '#1095#1077#1088#1077#1079' Ste' +
+                'am '#1080' '#1085#1072#1078#1084#1080#1090#1077' "'#1054#1073#1085#1086#1074#1080#1090#1100' '#1073#1072#1079#1091'".'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = 3026478
               Font.Height = -11
@@ -879,11 +884,11 @@ object FormMain: TFormMain
             object Label28: TLabel
               Left = 8
               Top = 152
-              Width = 368
+              Width = 372
               Height = 13
               Caption = 
                 #1057#1077#1088#1074#1077#1088' Unturned '#1088#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082#1072' '#1076#1072#1085#1085#1086#1081' '#1087#1088#1086#1075#1088#1072#1084#1084#1099' '#1085#1072#1093#1086#1076#1080#1090#1089#1103' '#1087#1086' '#1072#1076#1088#1077#1089 +
-                #1091
+                #1091':'
             end
             object SpeedButtonGame: TsSpeedButton
               Left = 295
@@ -958,6 +963,7 @@ object FormMain: TFormMain
               Height = 21
               BevelKind = bkFlat
               BevelOuter = bvNone
+              BevelWidth = 3
               BorderStyle = bsNone
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
@@ -5000,6 +5006,10 @@ object FormMain: TFormMain
         Caption = #1055#1088#1077#1076#1084#1077#1090#1099
         ImageIndex = 1
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Panel1: TPanel
           Left = 676
           Top = 0
@@ -5009,57 +5019,6 @@ object FormMain: TFormMain
           BevelOuter = bvNone
           ShowCaption = False
           TabOrder = 0
-          object TableExItemProp: TTableEx
-            Left = 0
-            Top = 130
-            Width = 350
-            Height = 582
-            Align = alClient
-            BevelEdges = [beTop]
-            BevelKind = bkSoft
-            BevelOuter = bvNone
-            BorderStyle = bsNone
-            DefaultRowHeight = 30
-            TabOrder = 0
-            OnDblClick = TableExItemPropDblClick
-            ShowColumns = False
-            ShowScrollBar = False
-            ItemIndex = -1
-            GetData = TableExItemPropGetData
-            LineColor = 15856370
-            LineColorXor = 15198440
-            LineHotColor = 14474460
-            LineSelColor = 7105644
-            ColumnsColor = 14474460
-            FontHotLine.Charset = DEFAULT_CHARSET
-            FontHotLine.Color = 2631720
-            FontHotLine.Height = -11
-            FontHotLine.Name = 'Tahoma'
-            FontHotLine.Style = []
-            FontLine.Charset = DEFAULT_CHARSET
-            FontLine.Color = 2631720
-            FontLine.Height = -11
-            FontLine.Name = 'Tahoma'
-            FontLine.Style = []
-            FontSelLine.Charset = DEFAULT_CHARSET
-            FontSelLine.Color = clWhite
-            FontSelLine.Height = -11
-            FontSelLine.Name = 'Tahoma'
-            FontSelLine.Style = []
-            ColumnsFont.Charset = DEFAULT_CHARSET
-            ColumnsFont.Color = 2631720
-            ColumnsFont.Height = -11
-            ColumnsFont.Name = 'Tahoma'
-            ColumnsFont.Style = []
-            ColWidths = (
-              155)
-            RowHeights = (
-              30
-              30
-              30
-              30
-              30)
-          end
           object Panel6: TPanel
             Left = 0
             Top = 0
@@ -5070,7 +5029,7 @@ object FormMain: TFormMain
             BevelOuter = bvNone
             Color = clWhite
             ParentBackground = False
-            TabOrder = 1
+            TabOrder = 0
             object PanelItemPic: TPanel
               Left = 0
               Top = 0
@@ -5324,54 +5283,6 @@ object FormMain: TFormMain
           BevelOuter = bvNone
           ShowCaption = False
           TabOrder = 1
-          object TableExItems: TTableEx
-            Left = 0
-            Top = 30
-            Width = 676
-            Height = 682
-            Align = alClient
-            BorderStyle = bsNone
-            DefaultRowHeight = 32
-            TabOrder = 0
-            OnDrawCellData = TableExItemsDrawCellData
-            ItemIndex = -1
-            ItemCount = 4
-            OnItemClick = TableExItemsItemClick
-            GetData = TableExItemsGetData
-            LineColor = 15856370
-            LineColorXor = 15198440
-            LineHotColor = 14474460
-            LineSelColor = 7105644
-            ColumnsColor = 14474460
-            FontHotLine.Charset = DEFAULT_CHARSET
-            FontHotLine.Color = 2631720
-            FontHotLine.Height = -11
-            FontHotLine.Name = 'Tahoma'
-            FontHotLine.Style = []
-            FontLine.Charset = DEFAULT_CHARSET
-            FontLine.Color = 2631720
-            FontLine.Height = -11
-            FontLine.Name = 'Tahoma'
-            FontLine.Style = []
-            FontSelLine.Charset = DEFAULT_CHARSET
-            FontSelLine.Color = clWhite
-            FontSelLine.Height = -11
-            FontSelLine.Name = 'Tahoma'
-            FontSelLine.Style = []
-            ColumnsFont.Charset = DEFAULT_CHARSET
-            ColumnsFont.Color = 2631720
-            ColumnsFont.Height = -11
-            ColumnsFont.Name = 'Tahoma'
-            ColumnsFont.Style = []
-            ColWidths = (
-              515)
-            RowHeights = (
-              32
-              32
-              32
-              32
-              32)
-          end
           object Panel3: TPanel
             Left = 0
             Top = 0
@@ -5381,7 +5292,7 @@ object FormMain: TFormMain
             Margins.Bottom = 0
             Align = alTop
             BevelOuter = bvNone
-            TabOrder = 1
+            TabOrder = 0
             object sSpeedButton1: TsSpeedButton
               Left = 353
               Top = 0
@@ -5452,9 +5363,6 @@ object FormMain: TFormMain
               TextHint = #1055#1086#1080#1089#1082'...'
               OnChange = EditSearchItemChange
               OnKeyPress = EditSearchItemKeyPress
-              ExplicitTop = 3
-              ExplicitWidth = 378
-              ExplicitHeight = 24
             end
             object ComboBoxItemGroups: TComboBox
               Left = 376
@@ -5478,7 +5386,6 @@ object FormMain: TFormMain
               TabOrder = 1
               TabStop = False
               OnChange = ComboBoxItemGroupsChange
-              ExplicitLeft = 466
             end
             object Panel25: TPanel
               Left = 0
@@ -5667,6 +5574,10 @@ object FormMain: TFormMain
         Caption = #1058#1088#1072#1085#1089#1087#1086#1088#1090
         ImageIndex = 2
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Panel2: TPanel
           Left = 676
           Top = 0
@@ -5734,13 +5645,12 @@ object FormMain: TFormMain
                 Margins.Right = 1
                 Margins.Bottom = 1
                 Align = alClient
+                AutoSize = True
                 Center = True
                 Proportional = True
                 OnDblClick = ImageVehicleDblClick
-                ExplicitLeft = 53
-                ExplicitTop = -1
-                ExplicitWidth = 136
-                ExplicitHeight = 136
+                ExplicitTop = 27
+                ExplicitHeight = 103
               end
             end
             object Panel12: TPanel
@@ -5929,56 +5839,6 @@ object FormMain: TFormMain
               end
             end
           end
-          object TableExVehicleProp: TTableEx
-            Left = 0
-            Top = 130
-            Width = 350
-            Height = 582
-            Align = alClient
-            BevelEdges = [beTop]
-            BevelKind = bkSoft
-            BevelOuter = bvNone
-            BorderStyle = bsNone
-            DefaultRowHeight = 30
-            TabOrder = 1
-            ShowColumns = False
-            ShowScrollBar = False
-            ItemIndex = -1
-            GetData = TableExVehiclePropGetData
-            LineColor = 15856370
-            LineColorXor = 15198440
-            LineHotColor = 14474460
-            LineSelColor = 7105644
-            ColumnsColor = 14474460
-            FontHotLine.Charset = DEFAULT_CHARSET
-            FontHotLine.Color = 2631720
-            FontHotLine.Height = -11
-            FontHotLine.Name = 'Tahoma'
-            FontHotLine.Style = []
-            FontLine.Charset = DEFAULT_CHARSET
-            FontLine.Color = 2631720
-            FontLine.Height = -11
-            FontLine.Name = 'Tahoma'
-            FontLine.Style = []
-            FontSelLine.Charset = DEFAULT_CHARSET
-            FontSelLine.Color = clWhite
-            FontSelLine.Height = -11
-            FontSelLine.Name = 'Tahoma'
-            FontSelLine.Style = []
-            ColumnsFont.Charset = DEFAULT_CHARSET
-            ColumnsFont.Color = 2631720
-            ColumnsFont.Height = -11
-            ColumnsFont.Name = 'Tahoma'
-            ColumnsFont.Style = []
-            ColWidths = (
-              155)
-            RowHeights = (
-              30
-              30
-              30
-              30
-              30)
-          end
         end
         object Panel5: TPanel
           Left = 0
@@ -5990,54 +5850,6 @@ object FormMain: TFormMain
           BevelOuter = bvNone
           ShowCaption = False
           TabOrder = 1
-          object TableExVehicles: TTableEx
-            Left = 0
-            Top = 30
-            Width = 676
-            Height = 682
-            Align = alClient
-            BorderStyle = bsNone
-            DefaultRowHeight = 32
-            TabOrder = 0
-            OnDrawCellData = TableExVehiclesDrawCellData
-            ItemIndex = -1
-            ItemCount = 4
-            OnItemClick = TableExVehiclesItemClick
-            GetData = TableExVehiclesGetData
-            LineColor = 15856370
-            LineColorXor = 15198440
-            LineHotColor = 14474460
-            LineSelColor = 7105644
-            ColumnsColor = 14474460
-            FontHotLine.Charset = DEFAULT_CHARSET
-            FontHotLine.Color = 2631720
-            FontHotLine.Height = -11
-            FontHotLine.Name = 'Tahoma'
-            FontHotLine.Style = []
-            FontLine.Charset = DEFAULT_CHARSET
-            FontLine.Color = 2631720
-            FontLine.Height = -11
-            FontLine.Name = 'Tahoma'
-            FontLine.Style = []
-            FontSelLine.Charset = DEFAULT_CHARSET
-            FontSelLine.Color = clWhite
-            FontSelLine.Height = -11
-            FontSelLine.Name = 'Tahoma'
-            FontSelLine.Style = []
-            ColumnsFont.Charset = DEFAULT_CHARSET
-            ColumnsFont.Color = 2631720
-            ColumnsFont.Height = -11
-            ColumnsFont.Name = 'Tahoma'
-            ColumnsFont.Style = []
-            ColWidths = (
-              515)
-            RowHeights = (
-              32
-              32
-              32
-              32
-              32)
-          end
           object Panel23: TPanel
             Left = 0
             Top = 0
@@ -6047,7 +5859,7 @@ object FormMain: TFormMain
             Margins.Bottom = 0
             Align = alTop
             BevelOuter = bvNone
-            TabOrder = 1
+            TabOrder = 0
             object sSpeedButton2: TsSpeedButton
               Left = 353
               Top = 0
@@ -6118,9 +5930,6 @@ object FormMain: TFormMain
               TextHint = #1055#1086#1080#1089#1082'...'
               OnChange = EditSearchVehicleChange
               OnKeyPress = EditSearchVehicleKeyPress
-              ExplicitTop = 3
-              ExplicitWidth = 438
-              ExplicitHeight = 24
             end
             object ComboBoxVehicleGroup: TComboBox
               Left = 376
@@ -6144,7 +5953,6 @@ object FormMain: TFormMain
               TabOrder = 1
               TabStop = False
               OnChange = ComboBoxVehicleGroupChange
-              ExplicitLeft = 466
             end
           end
         end
@@ -6153,6 +5961,10 @@ object FormMain: TFormMain
         Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         DesignSize = (
           1026
           712)
@@ -6409,7 +6221,7 @@ object FormMain: TFormMain
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 1020
+              Width = 116
               Height = 19
               Align = alTop
               Caption = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1086
@@ -6419,25 +6231,62 @@ object FormMain: TFormMain
               Font.Name = 'Tahoma'
               Font.Style = []
               ParentFont = False
-              ExplicitWidth = 116
             end
             object Label10: TLabel
-              Left = 16
-              Top = 26
-              Width = 452
-              Height = 13
+              Left = 10
+              Top = 31
+              Width = 155
+              Height = 45
+              AutoSize = False
               Caption = 
                 #1042#1099#1075#1088#1091#1079#1080#1090#1100' '#1089#1087#1080#1089#1082#1080' '#1087#1077#1088#1076#1084#1077#1090#1086#1074' '#1080' '#1090#1088#1072#1085#1089#1087#1086#1088#1090#1072', '#1080#1093' '#1089#1074#1086#1081#1089#1090#1074#1072' '#1080' '#1076#1088#1091#1075#1080#1077' '#1076#1072 +
                 #1085#1085#1099#1077' '#1076#1083#1103' '#1087#1077#1088#1077#1074#1086#1076#1072
+              WordWrap = True
+            end
+            object Label29: TLabel
+              Left = 298
+              Top = 31
+              Width = 119
+              Height = 45
+              AutoSize = False
+              Caption = #1042#1099#1075#1088#1091#1079#1080#1090#1100' '#1080#1079#1086#1073#1088#1072#1078#1077#1085#1080#1103' '#1087#1088#1077#1076#1084#1077#1090#1086#1074' '#1089' ID '#1074' '#1087#1072#1087#1082#1091
+              WordWrap = True
+            end
+            object Label30: TLabel
+              Left = 550
+              Top = 31
+              Width = 139
+              Height = 45
+              AutoSize = False
+              Caption = #1042#1099#1075#1088#1091#1079#1080#1090#1100' '#1089#1087#1080#1089#1082#1080' '#1090#1088#1072#1085#1089#1087#1086#1088#1090#1072' '#1076#1083#1103' '#1087#1083#1072#1075#1080#1085#1072' VehicleEvents'
+              WordWrap = True
             end
             object ButtonLangUnload: TButton
-              Left = 16
-              Top = 45
+              Left = 168
+              Top = 39
               Width = 103
               Height = 25
               Caption = #1042#1099#1075#1088#1091#1079#1080#1090#1100
               TabOrder = 0
               OnClick = ButtonLangUnloadClick
+            end
+            object ButtonUnloadImg: TButton
+              Left = 428
+              Top = 39
+              Width = 103
+              Height = 25
+              Caption = #1042#1099#1075#1088#1091#1079#1080#1090#1100
+              TabOrder = 1
+              OnClick = ButtonUnloadImgClick
+            end
+            object ButtonUnloadVehicles: TButton
+              Left = 689
+              Top = 39
+              Width = 103
+              Height = 25
+              Caption = #1042#1099#1075#1088#1091#1079#1080#1090#1100
+              TabOrder = 2
+              OnClick = ButtonUnloadVehiclesClick
             end
           end
         end
@@ -6692,7 +6541,7 @@ object FormMain: TFormMain
     Left = 838
     Top = 633
     Bitmap = {
-      494C01011C0038000C0420002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011C0038003C0420002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000000001000001002000000000000000
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
