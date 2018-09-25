@@ -73,6 +73,8 @@ type
     TabSheetSettings: TTabSheet;
     Bevel4: TBevel;
     ButtonApply: TButton;
+    TableExItems: TTableEx;
+    TableExItemProp: TTableEx;
     Panel6: TPanel;
     PanelItemPic: TPanel;
     LabelDisImage: TLabel;
@@ -87,6 +89,7 @@ type
     Panel9: TPanel;
     Label14: TLabel;
     EditItemGroup: TEdit;
+    TableExVehicles: TTableEx;
     Panel10: TPanel;
     Panel11: TPanel;
     Label15: TLabel;
@@ -114,6 +117,7 @@ type
     LabelItemCount: TLabel;
     LabelVehicleCount: TLabel;
     Label24: TLabel;
+    TableExVehicleProp: TTableEx;
     PanelCtrlUpdate: TPanel;
     Shape1: TShape;
     Label2: TLabel;
@@ -190,10 +194,6 @@ type
     OpenPictureDialog: TOpenPictureDialog;
     SpeedButtonUBaseUpdate: TsSpeedButton;
     CheckBoxShowHints: TCheckBox;
-    ButtonUnloadImg: TButton;
-    Label29: TLabel;
-    Label30: TLabel;
-    ButtonUnloadVehicles: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ButtonReloadClick(Sender: TObject);
@@ -236,8 +236,6 @@ type
     procedure ImageShareGClick(Sender: TObject);
     procedure SpeedButtonGameClick(Sender: TObject);
     procedure SpeedButtonUBaseUpdateClick(Sender: TObject);
-    procedure ButtonUnloadImgClick(Sender: TObject);
-    procedure ButtonUnloadVehiclesClick(Sender: TObject);
   private
     //Settings
     FColumnSortItem:Integer;
@@ -249,6 +247,7 @@ type
     FLastSRItem:string;
     FLastSRVehicle:string;
     FMainColor:TColor;
+    FShowDefLang:Boolean;
     /////////////////////
     FAppPath: string;
     FLoadInfoStr:string;
@@ -263,6 +262,7 @@ type
     procedure SetLoadState(Value:TLoadState);
     procedure SetMenuColor(Value: TColor);
     procedure SetMenuIconColor(Color: TColor);
+    procedure SetShowDefLang(const Value: Boolean);
   public
     FItemGroups:TGroups;
     FItemProp:TItemProperties;
@@ -298,12 +298,13 @@ type
     property AppPath:string read FAppPath write SetAppPath;
     property LoadInfoStr:string read FLoadInfoStr write SetLoadInfoStr;
     property LoadState:TLoadState read FLoadState write SetLoadState;
+    property ShowDefLang:Boolean read FShowDefLang write SetShowDefLang;
   end;
 
 const
   AppVerMajor = 1;
-  AppVerMinor = 6;
-  VerPrefix = '';
+  AppVerMinor = 3;
+  VerPrefix = 'Beta';
   AppTitle = 'Проводник Unturned';
   AppDesc = 'Всегда свежий список ID предметов и транспорта в удобной для вас форме';
   URLApp = 'http://unturned.hemulgm.ru/app_unturned_explorer';
@@ -371,9 +372,9 @@ begin
  FIncreasingSortVehicle:=Ini.ReadBool('General', 'FIncreasingSortVehicle', True);
  FColumnSortItem:=Ini.ReadInteger('General', 'FColumnSortItem', 0);
  FColumnSortVehicle:=Ini.ReadInteger('General', 'FColumnSortVehicle', 0);
- FLang:=Ini.ReadString('General', 'Language', 'RU');
+ FLang:=Ini.ReadString('General', 'Language', '');
  FMainColor:=Ini.ReadInteger('General', 'SkinColor', FMainColor);
- UBase.ShowDefLang:=Ini.ReadBool('General', 'ShowDefLang', True);
+ FShowDefLang:=Ini.ReadBool('General', 'ShowDefLang', True);
  ShowHint:=Ini.ReadBool('General', 'ShowHints', True);
  Ini.Free;
 end;
@@ -390,7 +391,7 @@ begin
  Ini.WriteInteger('General', 'FColumnSortVehicle', FColumnSortVehicle);
  Ini.WriteString('General', 'Language', FLang);
  Ini.WriteInteger('General', 'SkinColor', FMainColor);
- Ini.WriteBool('General', 'ShowDefLang', UBase.ShowDefLang);
+ Ini.WriteBool('General', 'ShowDefLang', FShowDefLang);
  Ini.WriteBool('General', 'ShowHints', ShowHint);
  Ini.Free;
  Result:=True;
@@ -406,7 +407,9 @@ begin
 
  end;
  SetMenuColor(ColorDarker(FMainColor));
- SetMenuIconColor(ColorLighter(FMainColor, 60));
+ SetMenuIconColor(ColorLighter(FMainColor));
+ ShowHint:=CheckBoxShowHints.Checked;
+ UBase.ShowDefLang:=ShowDefLang;
 end;
 
 function TFormMain.PathMaster:Boolean;
@@ -464,20 +467,13 @@ begin
  end;
 
  ColorSelectMain.ColorValue:=FMainColor;
- CheckBoxLangShowDef.Checked:=UBase.ShowDefLang;
+ CheckBoxLangShowDef.Checked:=ShowDefLang;
  CheckBoxShowHints.Checked:=ShowHint;
 end;
 
 procedure TFormMain.Quit;
 begin
- try
-  SaveSettings;
- except
-  on E:Exception do
-   begin
-    MessageBox(Application.Handle, PWideChar('Произошла ошибка. Возможно у вас нет прав на запись. Запускайте программу от имени администратора.'#13#10+E.Message), 'Ошибка', MB_ICONWARNING or MB_OK);
-   end;
- end;
+ SaveSettings;
  Application.Terminate;
 end;
 
@@ -519,19 +515,14 @@ begin
 end;
 
 procedure TFormMain.TableExItemsDrawCellData(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
-var BMP:TPngImage;
+var BMP:TBitmap;
 begin
  with TableExItems.Canvas do
   begin
    if ACol <> 0 then Exit;
    if not IndexInList(ARow, TList(FItems)) then Exit;
-   BMP:=TPngImage.Create;
-   if UBase.GetItemIcon(FItems[ARow].IID, BMP) then
-    begin
-     BMP.TransparentColor:=clWhite;
-     BMP.Transparent:=True;
-     Draw(REct.Left, Rect.Top, BMP);
-    end;
+   BMP:=TBitmap.Create;
+   if UBase.GetItemIcon(FItems[ARow].IID, BMP) then Draw(REct.Left, Rect.Top, BMP);
    BMP.Free;
   end;
 end;
@@ -548,9 +539,10 @@ begin
  if not Between(0, FRow, FItems.Count - 1) then Exit;
 
  case FCol of
-  1:Value:=IntToStr(FItems[FRow].ID);
-  2:Value:=FItems[FRow].Desc;
-  3:Value:=FItems[FRow].Group;
+  1:Value:=IntToStr(FRow+1);
+  2:Value:=IntToStr(FItems[FRow].ID);
+  3:Value:=FItems[FRow].Desc;
+  4:Value:=FItems[FRow].Group;
  end;
 end;
 
@@ -577,19 +569,14 @@ begin
 end;
 
 procedure TFormMain.TableExVehiclesDrawCellData(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
-var BMP:TPngImage;
+var BMP:TBitmap;
 begin
  with TableExVehicles.Canvas do
   begin
    if ACol <> 0 then Exit;
    if not IndexInList(ARow, TList(FVehicles)) then Exit;
-   BMP:=TPngImage.Create;
-   if UBase.GetVehicleIcon(FVehicles[ARow].ID, BMP) then
-    begin
-     //BMP.TransparentColor:=clWhite;
-     //BMP.Transparent:=True;
-     Draw(Rect.Left, Rect.Top, BMP);
-    end;
+   BMP:=TBitmap.Create;
+   if UBase.GetVehicleIcon(FVehicles[ARow].ID, BMP) then Draw(Rect.Left, Rect.Top, BMP);
    BMP.Free;
   end;
 end;
@@ -606,17 +593,18 @@ begin
  if not Between(0, FRow, FVehicles.Count - 1) then Exit;
 
  case FCol of
-  1:Value:=IntToStr(FVehicles[FRow].ID);
-  2:Value:=FVehicles[FRow].Desc;
-  3:Value:=FloatToStr(FVehicles[FRow].Speed);
-  4:Value:=FloatToStr(FVehicles[FRow].Fuel);
-  5:Value:=FloatToStr(FVehicles[FRow].Health);
-  6:Value:=FVehicles[FRow].Group;
+  1:Value:=IntToStr(FRow+1);
+  2:Value:=IntToStr(FVehicles[FRow].ID);
+  3:Value:=FVehicles[FRow].Desc;
+  4:Value:=FloatToStr(FVehicles[FRow].Speed);
+  5:Value:=FloatToStr(FVehicles[FRow].Fuel);
+  6:Value:=FloatToStr(FVehicles[FRow].Health);
+  7:Value:=FVehicles[FRow].Group;
  end;
 end;
 
 procedure TFormMain.TableExVehiclesItemClick(Sender: TObject; MouseButton: TMouseButton; const Index: Integer);
-var BMP:TPngImage;
+var BMP:TBitmap;
 begin
  if not IndexInList(Index, TList(FVehicles)) then Exit;
  UBase.GetVehicleData(FVehicles[Index].VID, FVehicleProp);
@@ -624,7 +612,7 @@ begin
  EditVehID.Text:=IntToStr(FVehicles[Index].ID);
  EditVehDesc.Text:=FVehicles[Index].Desc;
  EditVehGroup.Text:=FVehicles[Index].Group;
- BMP:=TPngImage.Create;
+ BMP:=TBitmap.Create;
  if UBase.GetVehicleImage(FVehicles[Index].ID, BMP) then
   ImageVehicle.Picture.Assign(BMP)
  else ImageVehicle.Picture.Assign(nil);
@@ -707,7 +695,7 @@ begin
 end;
 
 procedure TFormMain.SelectItem(Index: Integer; Hand: Boolean);
-var BMP:TPngImage;
+var BMP:TBitmap;
 begin
  if not IndexInList(Index, TList(FItems)) then Exit;
  UBase.GetItemData(FItems[Index].IID, FItemProp);
@@ -716,7 +704,7 @@ begin
  EditItemID.Text:=IntToStr(FItems[Index].ID);
  EditItemName.Text:=FItems[Index].Desc;
  EditItemGroup.Text:=FItems[Index].Group;
- BMP:=TPngImage.Create;
+ BMP:=TBitmap.Create;
  if UBase.GetItemImage(FItems[Index].IID, BMP) then
   ImageItem.Picture.Assign(BMP)
  else ImageItem.Picture.Assign(nil);
@@ -727,7 +715,6 @@ procedure TFormMain.SetAppPath(const Value: string);
 begin
  FAppPath:=Value;
  EditUnturnedPath.Text:=FAppPath;
- UBase.PathFrom:=AppPath;
 end;
 
 procedure TFormMain.SetLoadInfoStr(Value:string);
@@ -737,13 +724,7 @@ end;
 
 procedure TFormMain.ButtonLangUnloadClick(Sender: TObject);
 begin
- if FileSaveDialog.Execute then
-  begin
-   ButtonLangUnload.Caption:='Подождите...';
-   Application.ProcessMessages;
-   UBase.UnloadDataStrings(FileSaveDialog.FileName);
-   ButtonLangUnload.Caption:='Выгрузить';
-  end;
+ if FileSaveDialog.Execute then UBase.UnloadDataStrings(FileSaveDialog.FileName);
 end;
 
 procedure TFormMain.ButtonSetDefaultClick(Sender: TObject);
@@ -751,29 +732,6 @@ begin
  if MessageBox(Handle, 'Вы действительно хотите установить все значения по умолчанию?', 'Внимание', MB_ICONWARNING or MB_YESNOCANCEL or MB_DEFBUTTON2) <> IDYES then Exit;
  DefaultSettings;
  PutSettings;
-end;
-
-procedure TFormMain.ButtonUnloadImgClick(Sender: TObject);
-var SDir:String;
-begin
- if AdvSelectDirectory('', '', SDir, True, False, True) then
-  begin
-   ButtonUnloadImg.Caption:='Подождите...';
-   Application.ProcessMessages;
-   UBase.UnloadDataImages(SDir);
-   ButtonUnloadImg.Caption:='Выгрузить';
-  end;
-end;
-
-procedure TFormMain.ButtonUnloadVehiclesClick(Sender: TObject);
-begin
- if FileSaveDialog.Execute then
-  begin
-   ButtonUnloadVehicles.Caption:='Подождите...';
-   Application.ProcessMessages;
-   UBase.UnloadVehicles(FileSaveDialog.FileName);
-   ButtonUnloadVehicles.Caption:='Выгрузить';
-  end;
 end;
 
 procedure TFormMain.ButtonChangeAppPathClick(Sender: TObject);
@@ -788,7 +746,7 @@ begin
   UBase.ReloadFrom(AppPath);
   GetAllItems;
  except
-  MessageBox(Application.Handle, 'При обновлении базы произошла неизвестная ошибка. Возможно у вас нет прав. Запустите программу от имени администратора.', '', MB_ICONSTOP or MB_OK);
+  MessageBox(Application.Handle, 'При обновлении базы произошла неизвестная ошибка', '', MB_ICONSTOP or MB_OK);
  end;
  LoadState:=lsLoaded;
 end;
@@ -802,8 +760,7 @@ begin
    FLang:=Copy(FLang, 1, FLang.Length-5);
   end
  else FLang:='';
- UBase.ShowDefLang:=CheckBoxLangShowDef.Checked;
- ShowHint:=CheckBoxShowHints.Checked;
+ ShowDefLang:=CheckBoxLangShowDef.Checked;
  ApplySettings;
  GetAllItems;
 end;
@@ -827,36 +784,106 @@ procedure TFormMain.CreateTables;
 begin
  with TableExItems do
   begin
-   AddColumn('', 32);
-   AddColumn('ID', 50);
-   AddColumn('Описание', 100);
-   AddColumn('Группа', 90);
-   Columns[2].Width:=ClientWidth - (90 + 50 + 32 + 50);
+   with Columns[0] do
+    begin
+     Caption:='';
+     Width:=32;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='№';
+     Width:=50;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='ID';
+     Width:=50;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='Описание';
+     Width:=100;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='Группа';
+     Width:=90;
+    end;
+   Columns[3].Width:=ClientWidth - (90 + 50 + 32 + 50);
   end;
 
  with TableExVehicles do
   begin
-   AddColumn('', 32);
-   AddColumn('ID', 50);
-   AddColumn('Описание', 20);
-   AddColumn('Скорость', 60);
-   AddColumn('Топливо', 60);
-   AddColumn('Броня', 60);
-   AddColumn('Группа', 90);
-   Columns[2].Width:=ClientWidth - (32 + 50 + 50 + 60 + 60 + 60 + 90);
+   with Columns[0] do
+    begin
+     Caption:='';
+     Width:=32;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='№';
+     Width:=50;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='ID';
+     Width:=50;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='Описание';
+     Width:=20;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='Скорость';
+     Width:=60;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='Топливо';
+     Width:=60;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='Броня';
+     Width:=60;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='Группа';
+     Width:=90;
+    end;
+   Columns[3].Width:=ClientWidth - (32 + 50 + 50 + 60 + 60 + 60 + 90);
   end;
 
  with TableExItemProp do
   begin
-   AddColumn('Описание', 60);
-   AddColumn('Значение', 100);
+   with Columns[0] do
+    begin
+     Caption:='Описание';
+     Width:=60;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='Значение';
+     Width:=100;
+    end;
    Columns[0].Width:=ClientWidth - 100;
   end;
 
  with TableExVehicleProp do
   begin
-   AddColumn('Описание', 60);
-   AddColumn('Значение', 100);
+   with Columns[0] do
+    begin
+     Caption:='Описание';
+     Width:=60;
+    end;
+   with Columns[AddColumn] do
+    begin
+     Caption:='Значение';
+     Width:=100;
+    end;
    Columns[0].Width:=ClientWidth - 100;
   end;
 end;
@@ -864,9 +891,9 @@ end;
 procedure TFormMain.DefaultSettings;
 begin
  FMainColor:=$00647C64; //$00666666 $00647C64
- FLang:='RU';
+ FLang:='';
  ShowHint:=True;
- UBase.ShowDefLang:=True;
+ ShowDefLang:=True;
 end;
 
 procedure TFormMain.EditSearchItemChange(Sender: TObject);
@@ -1019,6 +1046,11 @@ begin
  for i:= 0 to ImageList24.Count - 1 do ColorImages(ImageList24, i, Color);
 end;
 
+procedure TFormMain.SetShowDefLang(const Value: Boolean);
+begin
+ FShowDefLang:=Value;
+end;
+
 procedure TFormMain.Share(Tag: Integer);
 procedure DoShare(link:string);
 begin
@@ -1100,7 +1132,6 @@ end;
 
 procedure TFormMain.SpeedButtonUBaseUpdateClick(Sender: TObject);
 begin
- UBase.PathFrom:=AppPath;
  GetAllItems;
 end;
 
@@ -1118,8 +1149,6 @@ end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
- UBase:=TUnturnedItemBase.Create(DataBaseFN);
- UBase.OnProgress:=OnLoadProgress;
  LoadState:=lsNone;
  OpenMaster:=False;
  DefaultSettings;
@@ -1137,6 +1166,8 @@ begin
  FUpdateTableItemProp;
  FVehicleProp:=TItemProperties.Create;
  FUpdateTableVehicleProp;
+ UBase:=TUnturnedItemBase.Create(DataBaseFN);
+ UBase.OnProgress:=OnLoadProgress;
  EditURL.Text:=URLApp;
  EditAppVer.Text:=IntToStr(AppVerMajor)+'.'+IntToStr(AppVerMinor)+' '+VerPrefix;
  if not LoadSettings then OpenMaster:=True
@@ -1197,7 +1228,7 @@ begin
  LabelItemCount.Caption:=IntToStr(UBase.ItemCount);
  if not DirectoryExists(UBase.PathFrom) then
   begin
-   if MessageBox(Handle, 'Необходимо указать каталог с игрой. Сделать это прямо сейчас?', '', MB_ICONINFORMATION or MB_YESNO) = ID_YES then
+   if MessageBox(Handle, 'Необходимо указать каталог с игрой. Сделать это сейчас?', '', MB_ICONINFORMATION or MB_YESNO) = ID_YES then
     begin
      PathMaster;
      if not DirectoryExists(UBase.PathFrom) then Exit;
@@ -1240,13 +1271,12 @@ begin
 end;
 
 procedure TFormMain.ImageVehicleDblClick(Sender: TObject);
-{var BMP:TBitmap;
+var BMP:TBitmap;
     FName:string;
     VID:Integer;
     Image:TImage;
-    }
 begin
- {VID:=TableExVehicles.ItemIndex;
+ VID:=TableExVehicles.ItemIndex;
  if not IndexInList(VID, TList(FVehicles)) then Exit;
  VID:=FVehicles[VID].ID;
  if not OpenPictureDialog.Execute(Handle) then Exit;
@@ -1261,11 +1291,11 @@ begin
    Exit;
   end;
  end;
- BMP:=TPngImage.cre
+ BMP:=TBitmap.Create;
  BMP.SetSize(Image.Picture.Width, Image.Picture.Height);
  BMP.Canvas.Draw(0, 0, Image.Picture.Graphic);
  UBase.SetVehicleImage(VID, BMP);
- BMP.Free;  }
+ BMP.Free;
 end;
 
 procedure TFormMain.Label12Click(Sender: TObject);
