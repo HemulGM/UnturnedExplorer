@@ -5022,15 +5022,11 @@ object FormMain: TFormMain
             DefaultRowHeight = 30
             TabOrder = 0
             OnDblClick = TableExItemPropDblClick
-            ShowColumns = False
-            ShowScrollBar = False
             ItemIndex = -1
             GetData = TableExItemPropGetData
-            LineColor = 15856370
-            LineColorXor = 15198440
-            LineHotColor = 14474460
-            LineSelColor = 7105644
-            ColumnsColor = 14474460
+            ShowScrollBar = False
+            CanNoSelect = False
+            ItemCount = 1
             FontHotLine.Charset = DEFAULT_CHARSET
             FontHotLine.Color = 2631720
             FontHotLine.Height = -11
@@ -5046,18 +5042,15 @@ object FormMain: TFormMain
             FontSelLine.Height = -11
             FontSelLine.Name = 'Tahoma'
             FontSelLine.Style = []
+            ShowColumns = False
             ColumnsFont.Charset = DEFAULT_CHARSET
             ColumnsFont.Color = 2631720
             ColumnsFont.Height = -11
             ColumnsFont.Name = 'Tahoma'
             ColumnsFont.Style = []
             ColWidths = (
-              155)
+              200)
             RowHeights = (
-              30
-              30
-              30
-              30
               30)
           end
           object Panel6: TPanel
@@ -5335,14 +5328,10 @@ object FormMain: TFormMain
             TabOrder = 0
             OnDrawCellData = TableExItemsDrawCellData
             ItemIndex = -1
-            ItemCount = 4
             OnItemClick = TableExItemsItemClick
             GetData = TableExItemsGetData
-            LineColor = 15856370
-            LineColorXor = 15198440
-            LineHotColor = 14474460
-            LineSelColor = 7105644
-            ColumnsColor = 14474460
+            CanNoSelect = False
+            ItemCount = 4
             FontHotLine.Charset = DEFAULT_CHARSET
             FontHotLine.Color = 2631720
             FontHotLine.Height = -11
@@ -5364,9 +5353,9 @@ object FormMain: TFormMain
             ColumnsFont.Name = 'Tahoma'
             ColumnsFont.Style = []
             ColWidths = (
-              515)
+              200)
             RowHeights = (
-              32
+              30
               32
               32
               32
@@ -5478,7 +5467,6 @@ object FormMain: TFormMain
               TabOrder = 1
               TabStop = False
               OnChange = ComboBoxItemGroupsChange
-              ExplicitLeft = 466
             end
             object Panel25: TPanel
               Left = 0
@@ -5941,15 +5929,11 @@ object FormMain: TFormMain
             BorderStyle = bsNone
             DefaultRowHeight = 30
             TabOrder = 1
-            ShowColumns = False
-            ShowScrollBar = False
             ItemIndex = -1
             GetData = TableExVehiclePropGetData
-            LineColor = 15856370
-            LineColorXor = 15198440
-            LineHotColor = 14474460
-            LineSelColor = 7105644
-            ColumnsColor = 14474460
+            ShowScrollBar = False
+            CanNoSelect = False
+            ItemCount = 1
             FontHotLine.Charset = DEFAULT_CHARSET
             FontHotLine.Color = 2631720
             FontHotLine.Height = -11
@@ -5965,18 +5949,15 @@ object FormMain: TFormMain
             FontSelLine.Height = -11
             FontSelLine.Name = 'Tahoma'
             FontSelLine.Style = []
+            ShowColumns = False
             ColumnsFont.Charset = DEFAULT_CHARSET
             ColumnsFont.Color = 2631720
             ColumnsFont.Height = -11
             ColumnsFont.Name = 'Tahoma'
             ColumnsFont.Style = []
             ColWidths = (
-              155)
+              200)
             RowHeights = (
-              30
-              30
-              30
-              30
               30)
           end
         end
@@ -6001,14 +5982,10 @@ object FormMain: TFormMain
             TabOrder = 0
             OnDrawCellData = TableExVehiclesDrawCellData
             ItemIndex = -1
-            ItemCount = 4
             OnItemClick = TableExVehiclesItemClick
             GetData = TableExVehiclesGetData
-            LineColor = 15856370
-            LineColorXor = 15198440
-            LineHotColor = 14474460
-            LineSelColor = 7105644
-            ColumnsColor = 14474460
+            CanNoSelect = False
+            ItemCount = 4
             FontHotLine.Charset = DEFAULT_CHARSET
             FontHotLine.Color = 2631720
             FontHotLine.Height = -11
@@ -6030,9 +6007,9 @@ object FormMain: TFormMain
             ColumnsFont.Name = 'Tahoma'
             ColumnsFont.Style = []
             ColWidths = (
-              515)
+              200)
             RowHeights = (
-              32
+              30
               32
               32
               32
@@ -6118,9 +6095,6 @@ object FormMain: TFormMain
               TextHint = #1055#1086#1080#1089#1082'...'
               OnChange = EditSearchVehicleChange
               OnKeyPress = EditSearchVehicleKeyPress
-              ExplicitTop = 3
-              ExplicitWidth = 438
-              ExplicitHeight = 24
             end
             object ComboBoxVehicleGroup: TComboBox
               Left = 376
@@ -6144,7 +6118,6 @@ object FormMain: TFormMain
               TabOrder = 1
               TabStop = False
               OnChange = ComboBoxVehicleGroupChange
-              ExplicitLeft = 466
             end
           end
         end
@@ -6409,7 +6382,7 @@ object FormMain: TFormMain
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 1020
+              Width = 116
               Height = 19
               Align = alTop
               Caption = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1086
@@ -6419,7 +6392,6 @@ object FormMain: TFormMain
               Font.Name = 'Tahoma'
               Font.Style = []
               ParentFont = False
-              ExplicitWidth = 116
             end
             object Label10: TLabel
               Left = 16
@@ -6692,7 +6664,7 @@ object FormMain: TFormMain
     Left = 838
     Top = 633
     Bitmap = {
-      494C01011C0038000C0420002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011C003800100420002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000000001000001002000000000000000
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

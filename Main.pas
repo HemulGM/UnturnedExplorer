@@ -7,8 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.IniFiles,
   Vcl.ComCtrls, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Imaging.pngimage, Vcl.Menus, Vcl.Imaging.jpeg, Vcl.Styles,
   Data.DB, Vcl.ToolWin, System.ImageList, System.Generics.Collections,
-  Vcl.Buttons, sSpeedButton, sPanel, UnturnedIDB, Vcl.Grids, TableDraw, Vcl.Imaging.GIFImg,
-  acPNG, sComboBoxes, sColorSelect, Vcl.Clipbrd, Vcl.ExtDlgs;
+  Vcl.Buttons, sSpeedButton, sPanel, UnturnedIDB, Vcl.Grids, Vcl.Imaging.GIFImg,
+  acPNG, sComboBoxes, sColorSelect, Vcl.Clipbrd, Vcl.ExtDlgs, HGM.Controls.VirtualTable;
 
 type
   TLoadState = (lsNone, lsLoading, lsLoaded);
@@ -784,41 +784,17 @@ procedure TFormMain.CreateTables;
 begin
  with TableExItems do
   begin
-   with Columns[0] do
-    begin
-     Caption:='';
-     Width:=32;
-    end;
-   with Columns[AddColumn] do
-    begin
-     Caption:='№';
-     Width:=50;
-    end;
-   with Columns[AddColumn] do
-    begin
-     Caption:='ID';
-     Width:=50;
-    end;
-   with Columns[AddColumn] do
-    begin
-     Caption:='Описание';
-     Width:=100;
-    end;
-   with Columns[AddColumn] do
-    begin
-     Caption:='Группа';
-     Width:=90;
-    end;
+   AddColumn('', 32);
+   AddColumn('№', 50);
+   AddColumn('ID', 50);
+   AddColumn('Описание', 100);
+   AddColumn('Группа', 90);
    Columns[3].Width:=ClientWidth - (90 + 50 + 32 + 50);
   end;
 
  with TableExVehicles do
   begin
-   with Columns[0] do
-    begin
-     Caption:='';
-     Width:=32;
-    end;
+   AddColumn('', 32);
    with Columns[AddColumn] do
     begin
      Caption:='№';
@@ -859,11 +835,7 @@ begin
 
  with TableExItemProp do
   begin
-   with Columns[0] do
-    begin
-     Caption:='Описание';
-     Width:=60;
-    end;
+   AddColumn('Описание', 60);
    with Columns[AddColumn] do
     begin
      Caption:='Значение';
@@ -874,11 +846,7 @@ begin
 
  with TableExVehicleProp do
   begin
-   with Columns[0] do
-    begin
-     Caption:='Описание';
-     Width:=60;
-    end;
+   AddColumn('Описание', 60);
    with Columns[AddColumn] do
     begin
      Caption:='Значение';
