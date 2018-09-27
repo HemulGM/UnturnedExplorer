@@ -5441,9 +5441,6 @@ object FormMain: TFormMain
               TextHint = #1055#1086#1080#1089#1082'...'
               OnChange = EditSearchItemChange
               OnKeyPress = EditSearchItemKeyPress
-              ExplicitTop = 3
-              ExplicitWidth = 378
-              ExplicitHeight = 24
             end
             object ComboBoxItemGroups: TComboBox
               Left = 376
@@ -6382,7 +6379,7 @@ object FormMain: TFormMain
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 116
+              Width = 1020
               Height = 19
               Align = alTop
               Caption = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1086
@@ -6392,6 +6389,7 @@ object FormMain: TFormMain
               Font.Name = 'Tahoma'
               Font.Style = []
               ParentFont = False
+              ExplicitWidth = 116
             end
             object Label10: TLabel
               Left = 16
@@ -6664,7 +6662,7 @@ object FormMain: TFormMain
     Left = 838
     Top = 633
     Bitmap = {
-      494C01011C003800100420002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011C003800140420002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000000001000001002000000000000000
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
