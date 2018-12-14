@@ -5024,6 +5024,7 @@ object FormMain: TFormMain
             OnDblClick = TableExItemPropDblClick
             ItemIndex = -1
             GetData = TableExItemPropGetData
+            Columns = <>
             ShowScrollBar = False
             CanNoSelect = False
             ItemCount = 1
@@ -5048,10 +5049,6 @@ object FormMain: TFormMain
             ColumnsFont.Height = -11
             ColumnsFont.Name = 'Tahoma'
             ColumnsFont.Style = []
-            ColWidths = (
-              200)
-            RowHeights = (
-              30)
           end
           object Panel6: TPanel
             Left = 0
@@ -5330,6 +5327,7 @@ object FormMain: TFormMain
             ItemIndex = -1
             OnItemClick = TableExItemsItemClick
             GetData = TableExItemsGetData
+            Columns = <>
             CanNoSelect = False
             ItemCount = 4
             FontHotLine.Charset = DEFAULT_CHARSET
@@ -5352,14 +5350,6 @@ object FormMain: TFormMain
             ColumnsFont.Height = -11
             ColumnsFont.Name = 'Tahoma'
             ColumnsFont.Style = []
-            ColWidths = (
-              200)
-            RowHeights = (
-              30
-              32
-              32
-              32
-              32)
           end
           object Panel3: TPanel
             Left = 0
@@ -5928,6 +5918,7 @@ object FormMain: TFormMain
             TabOrder = 1
             ItemIndex = -1
             GetData = TableExVehiclePropGetData
+            Columns = <>
             ShowScrollBar = False
             CanNoSelect = False
             ItemCount = 1
@@ -5952,10 +5943,6 @@ object FormMain: TFormMain
             ColumnsFont.Height = -11
             ColumnsFont.Name = 'Tahoma'
             ColumnsFont.Style = []
-            ColWidths = (
-              200)
-            RowHeights = (
-              30)
           end
         end
         object Panel5: TPanel
@@ -5981,6 +5968,7 @@ object FormMain: TFormMain
             ItemIndex = -1
             OnItemClick = TableExVehiclesItemClick
             GetData = TableExVehiclesGetData
+            Columns = <>
             CanNoSelect = False
             ItemCount = 4
             FontHotLine.Charset = DEFAULT_CHARSET
@@ -6003,14 +5991,6 @@ object FormMain: TFormMain
             ColumnsFont.Height = -11
             ColumnsFont.Name = 'Tahoma'
             ColumnsFont.Style = []
-            ColWidths = (
-              200)
-            RowHeights = (
-              30
-              32
-              32
-              32
-              32)
           end
           object Panel23: TPanel
             Left = 0
@@ -6448,8 +6428,8 @@ object FormMain: TFormMain
       Margin = 0
       Spacing = 20
       OnClick = SpeedButtonReloadClick
-      Alignment = taLeftJustify
       Images = ImageList24
+      Alignment = taLeftJustify
       TextAlignment = taLeftJustify
       ImageIndex = 5
       WordWrap = False
@@ -6474,8 +6454,8 @@ object FormMain: TFormMain
       Margin = 0
       Spacing = 20
       OnClick = SpeedButtonQuitClick
-      Alignment = taLeftJustify
       Images = ImageList24
+      Alignment = taLeftJustify
       TextAlignment = taLeftJustify
       ImageIndex = 8
       WordWrap = False
@@ -6495,8 +6475,8 @@ object FormMain: TFormMain
       Margin = 0
       Spacing = 20
       OnClick = SpeedButtonSettingsClick
-      Alignment = taLeftJustify
       Images = ImageList24
+      Alignment = taLeftJustify
       TextAlignment = taLeftJustify
       ImageIndex = 7
       WordWrap = False
@@ -6506,7 +6486,7 @@ object FormMain: TFormMain
     end
     object SpeedButtonVehicles: TsSpeedButton
       Left = 0
-      Top = 106
+      Top = 102
       Width = 40
       Height = 30
       Hint = 'ID '#1090#1088#1072#1085#1089#1087#1086#1088#1090#1072
@@ -6516,8 +6496,8 @@ object FormMain: TFormMain
       Margin = 0
       Spacing = 20
       OnClick = SpeedButtonVehiclesClick
-      Alignment = taLeftJustify
       Images = ImageList24
+      Alignment = taLeftJustify
       TextAlignment = taLeftJustify
       ImageIndex = 26
       WordWrap = False
@@ -6527,7 +6507,7 @@ object FormMain: TFormMain
     end
     object SpeedButtonMain: TsSpeedButton
       Left = 0
-      Top = 40
+      Top = 36
       Width = 40
       Height = 30
       Hint = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077' '#1073#1072#1079#1086#1081
@@ -6537,33 +6517,17 @@ object FormMain: TFormMain
       Margin = 0
       Spacing = 20
       OnClick = SpeedButtonMainClick
-      Alignment = taLeftJustify
       Images = ImageList24
+      Alignment = taLeftJustify
       TextAlignment = taLeftJustify
       ImageIndex = 19
       WordWrap = False
       ExplicitLeft = -1
-      ExplicitTop = 36
-      ExplicitWidth = 38
-    end
-    object sSpeedButton9: TsSpeedButton
-      Left = 0
-      Top = 30
-      Width = 40
-      Height = 10
-      Align = alTop
-      Flat = True
-      Margin = 3
-      Spacing = 20
-      Alignment = taLeftJustify
-      ButtonStyle = tbsSeparator
-      TextAlignment = taLeftJustify
-      ImageIndex = 5
       ExplicitWidth = 38
     end
     object SpeedButtonItems: TsSpeedButton
       Left = 0
-      Top = 76
+      Top = 72
       Width = 40
       Height = 30
       Hint = 'ID '#1074#1077#1097#1077#1081
@@ -6573,8 +6537,8 @@ object FormMain: TFormMain
       Margin = 0
       Spacing = 20
       OnClick = SpeedButtonItemsClick
-      Alignment = taLeftJustify
       Images = ImageList24
+      Alignment = taLeftJustify
       TextAlignment = taLeftJustify
       ImageIndex = 27
       WordWrap = False
@@ -6594,8 +6558,8 @@ object FormMain: TFormMain
       Margin = 0
       Spacing = 20
       OnClick = SpeedButtonMenuClick
-      Alignment = taLeftJustify
       Images = ImageList24
+      Alignment = taLeftJustify
       TextAlignment = taLeftJustify
       ImageIndex = 22
       WordWrap = False
@@ -6606,7 +6570,7 @@ object FormMain: TFormMain
     object Shape2: TShape
       AlignWithMargins = True
       Left = 5
-      Top = 74
+      Top = 70
       Width = 30
       Height = 2
       Margins.Left = 5
@@ -6654,6 +6618,20 @@ object FormMain: TFormMain
       ExplicitTop = 597
       ExplicitWidth = 28
     end
+    object Shape13: TShape
+      AlignWithMargins = True
+      Left = 5
+      Top = 34
+      Width = 30
+      Height = 2
+      Margins.Left = 5
+      Margins.Top = 4
+      Margins.Right = 5
+      Margins.Bottom = 0
+      Align = alTop
+      Brush.Color = 11376726
+      Pen.Color = 11376726
+    end
   end
   object ImageList24: TImageList
     ColorDepth = cd32Bit
@@ -6662,7 +6640,7 @@ object FormMain: TFormMain
     Left = 838
     Top = 633
     Bitmap = {
-      494C01011C003800140420002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011C003800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000000001000001002000000000000000
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

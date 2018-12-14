@@ -55,7 +55,6 @@ type
     SpeedButtonSettings: TsSpeedButton;
     SpeedButtonVehicles: TsSpeedButton;
     SpeedButtonMain: TsSpeedButton;
-    sSpeedButton9: TsSpeedButton;
     SpeedButtonItems: TsSpeedButton;
     SpeedButtonMenu: TsSpeedButton;
     Shape2: TShape;
@@ -194,6 +193,7 @@ type
     OpenPictureDialog: TOpenPictureDialog;
     SpeedButtonUBaseUpdate: TsSpeedButton;
     CheckBoxShowHints: TCheckBox;
+    Shape13: TShape;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ButtonReloadClick(Sender: TObject);
