@@ -139,8 +139,6 @@ type
     PanelLoading: TPanel;
     ProgressBarGeneral: TProgressBar;
     LabelCurrentLoad: TLabel;
-    ButtonReload: TsSpeedButton;
-    SpeedButtonLoadVehImages: TsSpeedButton;
     Panel3: TPanel;
     sSpeedButton1: TsSpeedButton;
     EditSearchItem: TEdit;
@@ -194,6 +192,9 @@ type
     SpeedButtonUBaseUpdate: TsSpeedButton;
     CheckBoxShowHints: TCheckBox;
     Shape13: TShape;
+    Panel16: TPanel;
+    ButtonReload: TsSpeedButton;
+    SpeedButtonLoadVehImages: TsSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ButtonReloadClick(Sender: TObject);
@@ -303,11 +304,11 @@ type
 
 const
   AppVerMajor = 1;
-  AppVerMinor = 3;
+  AppVerMinor = 4;
   VerPrefix = 'Beta';
   AppTitle = 'Проводник Unturned';
   AppDesc = 'Всегда свежий список ID предметов и транспорта в удобной для вас форме';
-  URLApp = 'http://unturned.hemulgm.ru/app_unturned_explorer';
+  URLApp = 'https://hemulgm.ru/unturned_explorer';
   SteamURL = 'steam://connect/188.234.213.65:27015';
 
 var
@@ -784,74 +785,21 @@ procedure TFormMain.CreateTables;
 begin
  with TableExItems do
   begin
-   AddColumn('', 32);
-   AddColumn('№', 50);
-   AddColumn('ID', 50);
-   AddColumn('Описание', 100);
-   AddColumn('Группа', 90);
    Columns[3].Width:=ClientWidth - (90 + 50 + 32 + 50);
   end;
 
  with TableExVehicles do
   begin
-   AddColumn('', 32);
-   with Columns[AddColumn] do
-    begin
-     Caption:='№';
-     Width:=50;
-    end;
-   with Columns[AddColumn] do
-    begin
-     Caption:='ID';
-     Width:=50;
-    end;
-   with Columns[AddColumn] do
-    begin
-     Caption:='Описание';
-     Width:=20;
-    end;
-   with Columns[AddColumn] do
-    begin
-     Caption:='Скорость';
-     Width:=60;
-    end;
-   with Columns[AddColumn] do
-    begin
-     Caption:='Топливо';
-     Width:=60;
-    end;
-   with Columns[AddColumn] do
-    begin
-     Caption:='Броня';
-     Width:=60;
-    end;
-   with Columns[AddColumn] do
-    begin
-     Caption:='Группа';
-     Width:=90;
-    end;
    Columns[3].Width:=ClientWidth - (32 + 50 + 50 + 60 + 60 + 60 + 90);
   end;
 
  with TableExItemProp do
   begin
-   AddColumn('Описание', 60);
-   with Columns[AddColumn] do
-    begin
-     Caption:='Значение';
-     Width:=100;
-    end;
    Columns[0].Width:=ClientWidth - 100;
   end;
 
  with TableExVehicleProp do
   begin
-   AddColumn('Описание', 60);
-   with Columns[AddColumn] do
-    begin
-     Caption:='Значение';
-     Width:=100;
-    end;
    Columns[0].Width:=ClientWidth - 100;
   end;
 end;
@@ -1194,7 +1142,9 @@ begin
  EditUnturnedVer.Text:=UBase.Version;
  LabelVehicleCount.Caption:=IntToStr(UBase.VehicleCount);
  LabelItemCount.Caption:=IntToStr(UBase.ItemCount);
- if not DirectoryExists(UBase.PathFrom) then
+ if (not DirectoryExists(UBase.PathFrom)) or
+    (not FileExists(UBase.PathFrom+'\'+pathUnturnedExe))
+ then
   begin
    if MessageBox(Handle, 'Необходимо указать каталог с игрой. Сделать это сейчас?', '', MB_ICONINFORMATION or MB_YESNO) = ID_YES then
     begin
@@ -1273,7 +1223,7 @@ end;
 
 procedure TFormMain.Label5Click(Sender: TObject);
 begin
- ShellExecute(Application.Handle, 'open', 'http://unturned.hemulgm.ru', nil, nil, SW_NORMAL);
+ ShellExecute(Application.Handle, 'open', 'http://hemulgm.ru', nil, nil, SW_NORMAL);
 end;
 
 { TUENavigator }

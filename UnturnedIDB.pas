@@ -178,7 +178,7 @@ interface
   pbMax = 100;
 
   //Путь к файлу с инф. об игре
-  pathInfo = '\Modules\Unturned\Unturned.module';
+  pathInfo = '\Status.json';
   //Путь к иконкам предметов
   pathItemIcons = '\Extras\Icons\';
   //Название файла приложения игры
@@ -1779,19 +1779,29 @@ end;
 function TUnturnedItemBase.GetUnturnedVersion;
 var JSON:TStringList;
     FJSONObject:TJSONObject;
+    Major_Version: Integer;
+    Minor_Version: Integer;
+    Patch_Version: Integer;
 begin
  Result:='';
  if FileExists(AUnturnedPath+pathInfo) then
   begin
    JSON:=TStringList.Create;
-   JSON.LoadFromFile(AUnturnedPath+pathInfo);
-   FJSONObject:=TJSONObject.ParseJSONValue(JSON.Text) as TJSONObject;
-   JSON.Free;
-   if Assigned(FJSONObject) then
-    begin
-     Result:=Trim(FJSONObject.Get('Version').JsonValue.Value);
-     FJSONObject.Free;
-    end;
+   try
+     JSON.LoadFromFile(AUnturnedPath+pathInfo);
+     FJSONObject:=TJSONObject.ParseJSONValue(JSON.Text) as TJSONObject;
+     JSON.Free;
+     if Assigned(FJSONObject) then
+      begin
+       Major_Version:=FJSONObject.Get('Game').JsonValue.GetValue<integer>('Major_Version');
+       Minor_Version:=FJSONObject.Get('Game').JsonValue.GetValue<integer>('Minor_Version');
+       Patch_Version:=FJSONObject.Get('Game').JsonValue.GetValue<integer>('Patch_Version');
+       Result:=Format('%d.%d.%d', [Major_Version, Minor_Version, Patch_Version]);
+       FJSONObject.Free;
+      end;
+   except
+     //
+   end;
   end;
 end;
 
