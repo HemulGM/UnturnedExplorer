@@ -5,8 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Dialogs, Vcl.Imaging.pngimage,
-  System.Generics.Collections, System.JSON, System.Win.Registry, SQLiteTable3,
-  SQLite3, SQLLang, System.IniFiles, Winapi.WinInet;
+  System.Generics.Collections, System.JSON, System.Win.Registry, HGM.SQLite,
+  HGM.SQLite.Wrapper, HGM.SQLang, System.IniFiles, Winapi.WinInet;
 
 type
   //Уведомление о прогрессе загрузки
@@ -208,6 +208,7 @@ function LookUnturnedPath(var aUnturnedPath: string): Boolean;
 implementation
 
 //Замена подстрок
+
 procedure RepVar(var Dest: string; Indent, VarInd: string);
 var
   p: Word;
@@ -295,7 +296,8 @@ begin
     end;
   end;
   Paths.Free;
-  if not Result then aUnturnedPath := '';
+  if not Result then
+    aUnturnedPath := '';
 end;
 
 { TUnturnedItemBase }
@@ -460,7 +462,6 @@ var
     try
       Data.LoadFromFile(ItemFile);
     except
-
     end;
     if Data.Count <= 0 then
     begin
@@ -493,7 +494,7 @@ var
       AddValue('Desc', Result.Desc);
       AddValue('GID', Result.Group);
       FSQLBase.ExecSQL(GetSQL);
-      Result.IID := FSQLBase.GetLastInsertRowID;
+      Result.IID := FSQLBase.LastInsertRowID;
       EndCreate;
     end;
     Query := '';
@@ -704,7 +705,7 @@ begin
         FSQLBase.ExecSQL(GetSQL);
         EndCreate;
       end;
-      GID := FSQLBase.GetLastInsertRowID;
+      GID := FSQLBase.LastInsertRowID;
       FillItemGroup(ItemPath, SR.Name, GID);
     until (FindNext(SR) <> 0);
   FindClose(SR);
@@ -734,7 +735,7 @@ begin
               FSQLBase.ExecSQL(GetSQL);
               EndCreate;
             end;
-            GID := FSQLBase.GetLastInsertRowID;
+            GID := FSQLBase.LastInsertRowID;
             FillItem(tmp, SR.Name, GID);
             Continue;
           end;
@@ -747,11 +748,10 @@ begin
             FSQLBase.ExecSQL(GetSQL);
             EndCreate;
           end;
-          GID := FSQLBase.GetLastInsertRowID;
+          GID := FSQLBase.LastInsertRowID;
           FillItemGroup(ItemPath, SR.Name, GID);
         until (FindNext(SR) <> 0);
       FindClose(SR);
-
     until (FindNext(SRDir) <> 0);
   FindClose(SRDir);
   ListItems.Free;
@@ -869,7 +869,6 @@ var
           Result.Engine := Str;
           Continue;
         except
-
         end;
       end;
     end;
@@ -892,7 +891,7 @@ var
         TableName := tnVehiclesGroups;
         AddValue('Desc', Result.Engine);
         FSQLBase.ExecSQL(GetSQL);
-        Result.Group := FSQLBase.GetLastInsertRowID;
+        Result.Group := FSQLBase.LastInsertRowID;
         EndCreate;
       end;
     end
@@ -910,7 +909,7 @@ var
       AddValue('Fuel', Result.Fuel);
       AddValue('Health', Result.Health);
       FSQLBase.ExecSQL(GetSQL);
-      Result.VID := FSQLBase.GetLastInsertRowID;
+      Result.VID := FSQLBase.LastInsertRowID;
       EndCreate;
     end;
 
@@ -1093,7 +1092,7 @@ begin
       TableName := tnVehiclesImages;
       AddValue('ID', ID);
       FSQLBase.ExecSQL(GetSQL);
-      VDID := FSQLBase.GetLastInsertRowID;
+      VDID := FSQLBase.LastInsertRowID;
 
       Stream := TMemoryStream.Create;
       B128.SaveToStream(Stream);
@@ -1124,7 +1123,6 @@ begin
       EndCreate;
     end;
   except
-
   end;
 end;
 
@@ -1929,7 +1927,6 @@ begin
         Result := Format('%d.%d.%d', [Major_Version, Minor_Version, Patch_Version]);
         FJSONObject.Free;
       end;
-
     finally
       JSON.Free;
     end;
