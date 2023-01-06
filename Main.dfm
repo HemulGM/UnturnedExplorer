@@ -48,6 +48,10 @@ object FormMain: TFormMain
       object TabSheetManage: TTabSheet
         Caption = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object PanelCtrCllient: TPanel
           Left = 0
           Top = 0
@@ -4786,6 +4790,10 @@ object FormMain: TFormMain
         Caption = #1055#1088#1077#1076#1084#1077#1090#1099
         ImageIndex = 1
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Panel1: TPanel
           Left = 676
           Top = 0
@@ -4807,6 +4815,7 @@ object FormMain: TFormMain
             BorderStyle = bsNone
             DefaultRowHeight = 30
             TabOrder = 0
+            StyleElements = [seBorder]
             OnDblClick = TableExItemPropDblClick
             ItemIndex = -1
             GetData = TableExItemPropGetData
@@ -5118,6 +5127,7 @@ object FormMain: TFormMain
             BorderStyle = bsNone
             DefaultRowHeight = 32
             TabOrder = 0
+            StyleElements = [seBorder]
             OnDrawCellData = TableExItemsDrawCellData
             ItemIndex = -1
             OnItemClick = TableExItemsItemClick
@@ -5368,6 +5378,10 @@ object FormMain: TFormMain
         Caption = #1058#1088#1072#1085#1089#1087#1086#1088#1090
         ImageIndex = 2
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Panel2: TPanel
           Left = 676
           Top = 0
@@ -5642,6 +5656,7 @@ object FormMain: TFormMain
             BorderStyle = bsNone
             DefaultRowHeight = 30
             TabOrder = 1
+            StyleElements = [seBorder]
             ItemIndex = -1
             GetData = TableExVehiclePropGetData
             Columns = <
@@ -5699,6 +5714,7 @@ object FormMain: TFormMain
             BorderStyle = bsNone
             DefaultRowHeight = 32
             TabOrder = 0
+            StyleElements = [seBorder]
             OnDrawCellData = TableExVehiclesDrawCellData
             ItemIndex = -1
             OnItemClick = TableExVehiclesItemClick
@@ -5869,6 +5885,10 @@ object FormMain: TFormMain
         Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         DesignSize = (
           1026
           712)
@@ -6072,7 +6092,7 @@ object FormMain: TFormMain
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 1020
+              Width = 116
               Height = 19
               Align = alTop
               Caption = #1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1086
@@ -6082,7 +6102,6 @@ object FormMain: TFormMain
               Font.Name = 'Tahoma'
               Font.Style = []
               ParentFont = False
-              ExplicitWidth = 116
             end
             object Label10: TLabel
               Left = 16
@@ -6507,7 +6526,7 @@ object FormMain: TFormMain
     Left = 838
     Top = 633
     Bitmap = {
-      494C01011C003800180020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01011C003800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000000001000001002000000000000000
       0200000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -10761,7 +10780,7 @@ object FormMain: TFormMain
     Left = 664
     Top = 488
     Bitmap = {
-      494C010107000800440018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010107000800040018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000003000000001002000000000000048
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -11369,7 +11388,7 @@ object FormMain: TFormMain
     Left = 792
     Top = 488
     Bitmap = {
-      494C010102003000380020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010102003000040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000002000000001002000000000000040
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

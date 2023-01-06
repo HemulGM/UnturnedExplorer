@@ -9,9 +9,9 @@ uses
   Main.MD5 in '..\UnturnedServer\Main.MD5.pas',
   UServer.CommonFunc in '..\UnturnedServer\UServer.CommonFunc.pas',
   UnturnedIDB in 'UnturnedIDB.pas',
-  SQLite3 in '..\SQLite\SQLite3.pas',
-  SQLiteTable3 in '..\SQLite\SQLiteTable3.pas',
-  SQLLang in '..\SQLite\SQLLang.pas';
+  HGM.SQLang in '..\SQLite\HGM.SQLang.pas',
+  HGM.SQLite in '..\SQLite\HGM.SQLite.pas',
+  HGM.SQLite.Wrapper in '..\SQLite\HGM.SQLite.Wrapper.pas';
 
 {$R *.res}
 

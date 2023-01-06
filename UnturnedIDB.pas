@@ -876,12 +876,10 @@ var
       Result.Engine := 'Vehicle';
     if Map <> '' then
       Result.Engine := Result.Engine + ' ' + Map;
-    with SQl.Select do
+    with SQl.Select(tnVehiclesGroups, 'GID') do
     begin
-      TableName := tnVehiclesGroups;
-      AddField('GID');
       WhereFieldEqual('Desc', Result.Engine);
-      Table := FSQLBase.GetTable(GetSQL);
+      Table := FSQLBase.Query(GetSQL);
       EndCreate;
     end;
     if Table.RowCount <= 0 then
@@ -1135,12 +1133,9 @@ begin
   FileStrings := TStringList.Create;
   Abc := ['a'..'z', 'A'..'Z'];
   FileStrings.Add('[' + tnItems + ']');
-  with SQL.Select do
+  with SQL.Select(tnItems, ['ID', 'Desc']) do
   begin
-    TableName := tnItems;
-    AddField('ID');
-    AddField('Desc');
-    with FSQLBase.GetTable(GetSQL) do
+    with FSQLBase.Query(GetSQL) do
     begin
       while not Eof do
       begin
@@ -1152,17 +1147,15 @@ begin
     EndCreate;
   end;
   FileStrings.Add('[' + tnItemData + ']');
-  with SQL.Select do
+  with SQL.Select(tnItemData, 'DISTINCT Value') do
   begin
-    TableName := tnItemData;
-    AddField('DISTINCT Value');
-    with FSQLBase.GetTable(GetSQL) do
+    with FSQLBase.Query(GetSQL) do
     begin
       while not Eof do
       begin
         Str := FieldAsString(0);
         if Str.Length > 0 then
-          if Str[1] in Abc then
+          if CharInSet(Str[1], Abc) then
             FileStrings.Add(Str);
         Next;
       end;
@@ -1171,11 +1164,9 @@ begin
     EndCreate;
   end;
   FileStrings.Add('[' + tnItemGroups + ']');
-  with SQL.Select do
+  with SQL.Select(tnItemGroups, 'DISTINCT Desc') do
   begin
-    TableName := tnItemGroups;
-    AddField('DISTINCT Desc');
-    with FSQLBase.GetTable(GetSQL) do
+    with FSQLBase.Query(GetSQL) do
     begin
       while not Eof do
       begin
@@ -1187,12 +1178,9 @@ begin
     EndCreate;
   end;
   FileStrings.Add('[' + tnVehicles + ']');
-  with SQL.Select do
+  with SQL.Select(tnVehicles, ['ID', 'Desc']) do
   begin
-    TableName := tnVehicles;
-    AddField('ID');
-    AddField('Desc');
-    with FSQLBase.GetTable(GetSQL) do
+    with FSQLBase.Query(GetSQL) do
     begin
       while not Eof do
       begin
@@ -1204,17 +1192,15 @@ begin
     EndCreate;
   end;
   FileStrings.Add('[' + tnVehiclesData + ']');
-  with SQL.Select do
+  with SQL.Select(tnVehiclesData, 'DISTINCT Value') do
   begin
-    TableName := tnVehiclesData;
-    AddField('DISTINCT Value');
-    with FSQLBase.GetTable(GetSQL) do
+    with FSQLBase.Query(GetSQL) do
     begin
       while not Eof do
       begin
         Str := FieldAsString(0);
         if Str.Length > 0 then
-          if Str[1] in Abc then
+          if CharInSet(Str[1], Abc) then
             FileStrings.Add(Str);
         Next;
       end;
@@ -1223,11 +1209,9 @@ begin
     EndCreate;
   end;
   FileStrings.Add('[' + tnVehiclesGroups + ']');
-  with SQL.Select do
+  with SQL.Select(tnVehiclesGroups, 'Desc') do
   begin
-    TableName := tnVehiclesGroups;
-    AddField('Desc');
-    with FSQLBase.GetTable(GetSQL) do
+    with FSQLBase.Query(GetSQL) do
     begin
       while not Eof do
       begin
@@ -1249,15 +1233,10 @@ var
   Prop: TItemPorp;
   LangStr: string;
 begin
-  with SQL.Select do
+  with SQL.Select(tnVehiclesData, ['Key', 'Desc', 'IsID', 'Value']) do
   begin
-    TableName := tnVehiclesData;
-    AddField('Key');
-    AddField('Desc');
-    AddField('IsID');
-    AddField('Value');
     WhereFieldEqual('VID', VID);
-    Table := FSQLBase.GetTable(GetSQL);
+    Table := FSQLBase.Query(GetSQL);
     EndCreate;
   end;
   Item.Clear;
@@ -1286,12 +1265,10 @@ var
   Mem: TMemoryStream;
 begin
   Result := False;
-  with SQL.Select do
+  with SQL.Select(tnVehiclesImages, 'Icon') do
   begin
-    TableName := tnVehiclesImages;
-    AddField('Icon');
     WhereFieldEqual('ID', ID);
-    Table := FSQLBase.GetTable(GetSQL);
+    Table := FSQLBase.Query(GetSQL);
     EndCreate;
   end;
   if Table.RowCount > 0 then
@@ -1314,12 +1291,10 @@ var
   Mem: TMemoryStream;
 begin
   Result := False;
-  with SQL.Select do
+  with SQL.Select(tnVehiclesImages, 'Image') do
   begin
-    TableName := tnVehiclesImages;
-    AddField('Image');
     WhereFieldEqual('ID', ID);
-    Table := FSQLBase.GetTable(GetSQL);
+    Table := FSQLBase.Query(GetSQL);
     EndCreate;
   end;
   if Table.RowCount > 0 then
@@ -1611,10 +1586,8 @@ end;
 
 function TUnturnedItemBase.FGetItemCount: Integer;
 begin
-  with SQL.Select do
+  with SQL.Select(tnItems, 'COUNT(*)') do
   begin
-    TableName := tnItems;
-    AddField('COUNT(*)');
     Result := FSQLBase.GetTableValue(GetSQL);
     EndCreate;
   end;
@@ -1630,10 +1603,8 @@ end;
 
 procedure TUnturnedItemBase.FReadVersion;
 begin
-  with SQL.Select do
+  with SQL.Select(tnInfoData, 'Value') do
   begin
-    TableName := tnInfoData;
-    AddField('Value');
     WhereFieldEqual('Key', 'Version');
     FVersion := FSQLBase.GetTableString(GetSQL);
     EndCreate;
@@ -1642,10 +1613,8 @@ end;
 
 function TUnturnedItemBase.FVehicleCount: Integer;
 begin
-  with SQL.Select do
+  with SQL.Select(tnVehicles, 'COUNT(*)') do
   begin
-    TableName := tnVehicles;
-    AddField('COUNT(*)');
     Result := FSQLBase.GetTableValue(GetSQL);
     EndCreate;
   end;
@@ -1663,7 +1632,7 @@ begin
     SelQuery := SelQuery + ' WHERE ITEMS.GID = ' + QuotedStr(IntToStr(Group));
   SelQuery := SelQuery + ' ORDER BY ITEMS.GID, ITEMS.ID';
 
-  Table := FSQLBase.GetTable(SelQuery);
+  Table := FSQLBase.Query(SelQuery);
   while not Table.EOF do
   begin
     Item.IID := Table.FieldAsInteger(0);
@@ -1701,12 +1670,13 @@ var
   SelQuery, LangStr: string;
 begin
   Items.Clear;
-  SelQuery := 'SELECT VID, ID, VEHICLES.Desc, VEHICLESGROUPS.Desc, Speed, Fuel, Health FROM VEHICLES INNER JOIN VEHICLESGROUPS ON VEHICLES.GID = VEHICLESGROUPS.GID';
+  SelQuery :=
+    'SELECT VID, ID, VEHICLES.Desc, VEHICLESGROUPS.Desc, Speed, Fuel, Health FROM VEHICLES INNER JOIN VEHICLESGROUPS ON VEHICLES.GID = VEHICLESGROUPS.GID';
   if Group <> -1 then
     SelQuery := SelQuery + ' WHERE VEHICLES.GID = ' + QuotedStr(IntToStr(Group));
   SelQuery := SelQuery + ' ORDER BY VEHICLES.GID, VEHICLES.ID';
 
-  Table := FSQLBase.GetTable(SelQuery);
+  Table := FSQLBase.Query(SelQuery);
   while not Table.EOF do
   begin
     Item.VID := Table.FieldAsInteger(0);
@@ -1746,12 +1716,9 @@ var
   Group: TGroup;
   LangStr: string;
 begin
-  with SQL.Select do
+  with SQL.Select(tnItemGroups, ['GID', 'Desc']) do
   begin
-    TableName := tnItemGroups;
-    AddField('GID');
-    AddField('Desc');
-    Table := FSQLBase.GetTable(GetSQL);
+    Table := FSQLBase.Query(GetSQL);
     EndCreate;
   end;
   Items.Clear;
@@ -1781,12 +1748,9 @@ var
   Group: TGroup;
   LangStr: string;
 begin
-  with SQL.Select do
+  with SQL.Select(tnVehiclesGroups, ['GID', 'Desc']) do
   begin
-    TableName := tnVehiclesGroups;
-    AddField('GID');
-    AddField('Desc');
-    Table := FSQLBase.GetTable(GetSQL);
+    Table := FSQLBase.Query(GetSQL);
     EndCreate;
   end;
   Items.Clear;
@@ -1816,15 +1780,10 @@ var
   Prop: TItemPorp;
   LangStr: string;
 begin
-  with SQL.Select do
+  with SQL.Select(tnItemData, ['Key', 'Desc', 'IsID', 'Value']) do
   begin
-    TableName := tnItemData;
-    AddField('Key');
-    AddField('Desc');
-    AddField('IsID');
-    AddField('Value');
     WhereFieldEqual('IID', IID);
-    Table := FSQLBase.GetTable(GetSQL);
+    Table := FSQLBase.Query(GetSQL);
     EndCreate;
   end;
   Item.Clear;
@@ -1853,12 +1812,10 @@ var
   Mem: TMemoryStream;
 begin
   Result := False;
-  with SQL.Select do
+  with SQL.Select(tnItems, 'Icon') do
   begin
-    TableName := tnItems;
-    AddField('Icon');
     WhereFieldEqual('IID', IID);
-    Table := FSQLBase.GetTable(GetSQL);
+    Table := FSQLBase.Query(GetSQL);
     EndCreate;
   end;
   if Table.RowCount > 0 then
@@ -1881,12 +1838,10 @@ var
   Mem: TMemoryStream;
 begin
   Result := False;
-  with SQL.Select do
+  with SQL.Select(tnItems, 'Image') do
   begin
-    TableName := tnItems;
-    AddField('Image');
     WhereFieldEqual('IID', IID);
-    Table := FSQLBase.GetTable(GetSQL);
+    Table := FSQLBase.Query(GetSQL);
     EndCreate;
   end;
   if Table.RowCount > 0 then
